@@ -34,14 +34,14 @@ class Admin extends Base
 
         $data = array_merge($dummy, $doc->data);
 
-        $template = render(DIR_SYSTEM.'/modules/Main/views/admin.php', $data);
+        $template = render(app('dir.system').'/modules/Main/views/admin.php', $data);
         app('event')->trigger('render.ended', [&$template]);
         return $template;
     }
 
     public function getMenu()
     {
-        $rawMenu = app('adminMenu')->getMenu();
+        $rawMenu = app('admin.menu')->getMenu();
         $menuFlat = [];
 
         uasort($rawMenu, 'sortByWeight');

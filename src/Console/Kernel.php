@@ -6,32 +6,30 @@
  */
 namespace Sydes\Console;
 
-use Sydes\Container;
+use Psr\Container\ContainerInterface;
+use Sydes\App;
 
 class Kernel
 {
-    /** @var Container */
+    /** @var App */
     private $container;
     private $output;
 
-    public function __construct(array $values = [])
+    /** @var \DI\Container */
+    protected $app;
+
+    public function __construct(ContainerInterface $app)
     {
+        $this->app = $app;
+
         session_id('cli');
         session_start();
-        mb_internal_encoding('UTF-8');
-
-        error_reporting(-1);
-        set_error_handler('sydesErrorHandler');
 
         if (!isset($_SESSION['site'])) {
             $_SESSION['site'] = 1;
         }
 
         $_SERVER['HTTP_HOST'] = 'from.cli';
-
-        $config = include DIR_CONFIG.'/app.php';
-        $this->container = new Container($values, $config);
-        Container::setContainer($this->container);
 
         $this->output = new Output();
         $this->container['siteId'] = $_SESSION['site'];
@@ -45,7 +43,7 @@ class Kernel
 
         unset($argv[0]);
 
-        $this->container['translator']->init('en');
+        $this->app->get('translator')->init('en');
 
         try {
             $has = $this->parse($argv);
@@ -65,9 +63,11 @@ class Kernel
 
     protected function getCommands()
     {
+        $dir = $this->app->get('dir.site');
+
         $commands = new Commands();
-        if (is_dir(DIR_SITE.'/'.$_SESSION['site'])) {
-            $siteConf = include DIR_SITE.'/'.$_SESSION['site'].'/config.php';
+        if (is_dir($dir.'/'.$_SESSION['site'])) {
+            $siteConf = include $dir.'/'.$_SESSION['site'].'/config.php';
         } else {
             $siteConf = ['modules' => ['main' => []]];
         }

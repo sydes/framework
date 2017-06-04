@@ -4,24 +4,22 @@
  * @copyright 2011-2017, ArtyGrand <artygrand.ru>
  * @license   MIT license; see LICENSE
  */
-namespace Sydes;
 
-use Pimple\ServiceProviderInterface;
-use Sydes\Exception\AppException;
-use Sydes\Exception\BaseHandler;
-use Sydes\Exception\RedirectException;
+namespace Sydes\Exception;
+
+use Sydes\Services\ServiceProviderInterface;
 
 class ExceptionHandlersProvider implements ServiceProviderInterface
 {
-    public function register(\Pimple\Container $c)
+    public function register(\DI\Container $c)
     {
-        $c['RedirectExceptionHandler'] = $c->protect(function (RedirectException $e) {
+        $c->set('RedirectExceptionHandler', \DI\value(function (RedirectException $e) {
             return redirect($e->getUrl());
-        });
+        }));
 
-        $c['AppExceptionHandler'] = $c->protect(function (AppException $e) {
+        $c->set('AppExceptionHandler', \DI\value(function (AppException $e) use ($c) {
             $doc = document();
-            if (app('section') == 'front') {
+            if ($c->get('section') == 'front') {
                 if (model('Themes')->getActive()->getLayouts()->exists('error'.$e->getCode())) {
                     $doc->data['layout'] = 'error'.$e->getCode();
                 } else {
@@ -31,22 +29,22 @@ class ExceptionHandlersProvider implements ServiceProviderInterface
                 alert($e->getMessage(), 'danger');
             }
 
-            return html(app('renderer')->render($doc), $e->getCode());
-        });
+            return html($c->get('renderer')->render($doc), $e->getCode());
+        }));
 
-        $c['ConfirmationExceptionHandler'] = $c->protect(function () {
+        $c->set('ConfirmationExceptionHandler', \DI\value(function () {
             $doc = document([
                 'content' => view('main/confirm', [
                     'message'    => t('confirm_deletion'),
-                    'return_url' => app('request')->getHeaderLine('Referer') ?: '/admin',
+                    'return_url' => $c->get('request')->getHeaderLine('Referer') ?: '/admin',
                 ]),
             ]);
 
-            return html(app('renderer')->render($doc), 200);
-        });
+            return html($c->get('renderer')->render($doc), 200);
+        }));
 
-        $c['defaultErrorHandler'] = $c->protect(function (\Exception $e) use ($c) {
-            $debugLevel = $c['settings']['debugLevel'];
+        $c->set('defaultErrorHandler', \DI\value(function (\Exception $e) use ($c) {
+            $debugLevel = $c->get('settings')['debugLevel'];
             $handler = new BaseHandler;
 
             if ($debugLevel == 0) {
@@ -55,11 +53,11 @@ class ExceptionHandlersProvider implements ServiceProviderInterface
 
             alert($e->getMessage().'<br>'.$handler->getContent($e, $debugLevel), 'danger');
 
-            return html(app('renderer')->render(document()), 500);
-        });
+            return html($c->get('renderer')->render(document()), 500);
+        }));
 
-        $c['finalExceptionHandler'] = function () {
-            return new Exception\BaseHandler();
-        };
+        $c->set('finalExceptionHandler', function () {
+            return new BaseHandler;
+        });
     }
 }

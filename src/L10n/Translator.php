@@ -18,7 +18,7 @@ class Translator
      */
     public function init($locale)
     {
-        $this->available = str_replace(DIR_L10N.'/translations/', '', glob(DIR_L10N.'/translations/*'));
+        $this->available = str_replace(app('dir.l10n').'/translations/', '', glob(app('dir.l10n').'/translations/*'));
         $this->available[] = 'en';
 
         $this->setLocale('en')->setLocale($locale);
@@ -86,7 +86,7 @@ class Translator
     public function loadFrom($type, $name)
     {
         if ($type == 'theme') {
-            $base = DIR_THEME.'/'.$name;
+            $base = app('dir.theme').'/'.$name;
         } elseif ($type == 'module') {
             $base = moduleDir($name);
         } else {
@@ -99,7 +99,7 @@ class Translator
 
         $paths = [
             $base.'/languages/'.$this->locale.'.php',
-            DIR_L10N.'/translations/'.$this->locale.'/'.$type.'s/'.$name.'.php',
+            app('dir.l10n').'/translations/'.$this->locale.'/'.$type.'s/'.$name.'.php',
             $base.'/languages/en.php',
         ];
 

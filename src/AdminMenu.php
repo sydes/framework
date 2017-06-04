@@ -10,9 +10,9 @@ class AdminMenu
 {
     private $menu;
 
-    public function __construct($siteId)
+    public function __construct()
     {
-        $this->storage = DIR_SITE.'/'.$siteId.'/menu.php';
+        $this->storage = app('dir.site').'/'.app('site.id').'/menu.php';
         $this->menu = file_exists($this->storage) ? include $this->storage : [];
     }
 

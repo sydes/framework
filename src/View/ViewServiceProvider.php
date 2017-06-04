@@ -2,27 +2,24 @@
 
 namespace Sydes\View;
 
-use Pimple\Container;
-use Pimple\ServiceProviderInterface;
+use Sydes\Services\ServiceProviderInterface;
 
 class ViewServiceProvider implements ServiceProviderInterface
 {
-    public function register(Container $c)
+    public function register(\DI\Container $c)
     {
         $this->registerFactory($c);
         $this->registerEngineResolver($c);
     }
 
-    public function registerFactory(Container $c)
+    public function registerFactory(\DI\Container $c)
     {
-        $c['view'] = function ($c) {
-            return new Factory($c['view.engine.resolver'], $c['event']);
-        };
+        $c->set('view', \DI\object(Factory::class)->constructor(\DI\get('view.engine.resolver'), \DI\get('event')));
     }
 
-    public function registerEngineResolver(Container $c)
+    public function registerEngineResolver(\DI\Container $c)
     {
-        $c['view.engine.resolver'] = function () {
+        $c->set('view.engine.resolver', function () {
             $resolver = new Engines\EngineResolver;
 
             $resolver->register('file', function () {
@@ -34,6 +31,6 @@ class ViewServiceProvider implements ServiceProviderInterface
             });
 
             return $resolver;
-        };
+        });
     }
 }

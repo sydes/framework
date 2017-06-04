@@ -5,8 +5,7 @@
  * @license   MIT license; see LICENSE
  */
 
-use Sydes\Container;
-use Sydes\Exception\AppException;
+use Sydes\App;
 use Sydes\Html\Base;
 use Sydes\Http\Redirect;
 use Psr\Http\Message\ResponseInterface;
@@ -59,6 +58,21 @@ function token($length)
     }
     shuffle($chars);
     return implode('', array_slice($chars, 0, $length));
+}
+
+/**
+ * Get the available container instance.
+ *
+ * @param  string $id
+ * @return mixed|\Psr\Container\ContainerInterface
+ */
+function app($id = null)
+{
+    if (is_null($id)) {
+        return App::getContainer();
+    }
+
+    return App::getContainer()->get($id);
 }
 
 /**

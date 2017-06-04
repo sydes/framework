@@ -12,9 +12,9 @@ class Database
     protected $connections = [];
     protected $config;
 
-    public function __construct()
+    public function __construct(array $config)
     {
-        $this->config = include DIR_CONFIG.'/database.php';
+        $this->config = $config;
     }
 
     public function connection($name = null)
@@ -31,7 +31,10 @@ class Database
             $current = $this->config['connections'][$name];
 
             if ($current['driver'] == 'sqlite') {
-                $dsn = 'sqlite:'.$current['database'];
+                $dsn = 'sqlite:'.str_replace(
+                    ['{dir.site}', '{site.id}'],
+                    [app('dir.site'), app('site.id')],
+                    $current['database']);
                 $user = null;
                 $pass = null;
             } elseif ($current['driver'] == 'mysql') {
