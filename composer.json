@@ -1,6 +1,5 @@
 {
   "name": "sydes/framework",
-  "type": "library",
   "description": "Framework for SyDES CMS",
   "keywords": ["sydes", "framework"],
   "license": "MIT",
