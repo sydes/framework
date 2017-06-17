@@ -93,7 +93,7 @@ class Auth
             list($id, $hash) = explode(':', $_COOKIE['hash']);
 
             if ($user = $this->users->get($id)) {
-                if ($hash == $this->hash($user)) {
+                if ($user->get('autoLogin') == 1 && $hash == $this->hash($user)) {
                     $this->login($user, true);
                     return;
                 }
