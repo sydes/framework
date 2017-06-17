@@ -30,15 +30,12 @@ class Database
 
             $current = $this->config['connections'][$name];
 
+            $dsn = $user = $pass = null;
             if ($current['driver'] == 'sqlite') {
-                $dsn = 'sqlite:'.str_replace(
-                    ['{dir.site}', '{site.id}'],
-                    [app('dir.site'), app('site.id')],
-                    $current['database']);
-                $user = null;
-                $pass = null;
-            } elseif ($current['driver'] == 'mysql') {
-                $dsn = 'mysql:host='.$current['host'].';dbname='.$current['database'].';charset='.$current['charset'];
+                $dsn = 'sqlite:'.str_replace('{dir.site.this}', app('dir.site.this'), $current['database']);
+            } elseif (in_array($current['driver'], ['mysql', 'pgsql'])) {
+                $dsn = $current['driver'].':host='.$current['host'].
+                    ';dbname='.$current['database'].';charset='.$current['charset'];
                 $user = $current['username'];
                 $pass = $current['password'];
             }

@@ -327,7 +327,7 @@ function httpGet($url)
 function extractOuterZip($destination, $archive)
 {
     $result = false;
-    $temp = DIR_TEMP.'/'.token(6);
+    $temp = app('dir.temp').'/'.token(6);
     file_put_contents($temp, httpGet($archive));
 
     $zip = new ZipArchive;

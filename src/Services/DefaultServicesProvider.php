@@ -32,9 +32,6 @@ class DefaultServicesProvider implements ServiceProviderInterface
             );
         });
 
-        $c->set('Sydes\Cache', \DI\object()->constructor(\DI\get('dir.cache')));
-        $c->set('Sydes\Database', \DI\object()->constructor(\DI\get('db.config')));
-
         $c->set('renderer', function () use ($c) {
             $class = 'Sydes\Renderer\\'.ucfirst($c->get('section'));
 
