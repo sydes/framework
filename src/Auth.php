@@ -10,39 +10,48 @@ class Auth
 {
     /** @var User */
     protected $user;
-    protected $logged;
+    protected $users;
 
-    public function __construct()
+    public function __construct($userProvider, Http\Request $request)
     {
-        $this->user = model('Main/User')->get();
+        $this->users = $userProvider;
+        $this->request = $request;
     }
 
     /**
-     * @param string $username
+     * @param string $name
      * @param string $pass
      * @param bool   $remember
      * @return bool
      */
-    public function attempt($username, $pass, $remember = false)
+    public function attempt($name, $pass, $remember = false)
     {
-        if ($username != $this->user->get('username') || !$this->user->checkPassword($pass)) {
+        /** @var $user User */
+        if (!$user = $this->users->getByName($name)) {
             return false;
         }
 
-        return $this->login($remember);
+        if (!$user->checkPassword($pass)) {
+            return false;
+        }
+
+        return $this->login($user, $remember);
     }
 
     /**
+     * @param User $user
      * @param bool $remember
      * @return bool
      */
-    public function login($remember = false)
+    public function login(User $user, $remember = false)
     {
-        $_SESSION['hash'] = $this->hash();
+        $this->user = $user;
+
+        $_SESSION['hash'] = $user->get('id').':'.$this->hash($user);
         setcookie('entered', '1', time() + 604800, '/');
 
-        if ($remember && $this->user->get('autoLogin') == 1) {
-            setcookie('hash', $_SESSION['hash'], time() + 604800);
+        if ($remember && $user->get('autoLogin') == 1) {
+            setcookie('hash', $_SESSION['hash'], time() + 604800, '/');
         }
 
         return true;
@@ -55,50 +64,60 @@ class Auth
         setcookie('entered', '', 1, '/');
     }
 
-    private function checkLogin()
-    {
-        $hash = $this->hash();
-
-        if (isset($_SESSION['hash'])) { // already logged in
-            if ($_SESSION['hash'] == $hash) {
-                return true;
-            } else {
-                $this->logout();
-            }
-        } elseif ($this->user->get('autoLogin') == 1 && isset($_COOKIE['hash'])) { // login by cookies
-            if ($_COOKIE['hash'] == $hash) {
-                return $this->login(true);
-            } else {
-                $this->logout();
-            }
-        }
-
-        return false;
-    }
-
     /**
      * @return bool
      */
     public function check()
     {
-        if (is_null($this->logged)) {
-            $this->logged = $this->checkLogin();
+        if ($this->user === null) {
+            $this->tryLogin();
         }
 
-        return $this->logged;
+        return !empty($this->user);
+    }
+
+    private function tryLogin()
+    {
+        if (isset($_SESSION['hash'])) { // already logged in
+            list($id, $hash) = explode(':', $_SESSION['hash']);
+
+            if ($user = $this->users->get($id)) {
+                if ($hash == $this->hash($user)) {
+                    $this->user = $user;
+                    return;
+                }
+            }
+
+            $this->logout();
+        } elseif (isset($_COOKIE['hash'])) { // login by cookies
+            list($id, $hash) = explode(':', $_COOKIE['hash']);
+
+            if ($user = $this->users->get($id)) {
+                if ($hash == $this->hash($user)) {
+                    $this->login($user, true);
+                    return;
+                }
+            }
+
+            $this->logout();
+        }
     }
 
     /**
      * @param string $key
-     * @return string|User
+     * @return false|string|User
      */
     public function getUser($key = null)
     {
+        if (empty($this->user)) {
+            return false;
+        }
+
         return $key === null ? $this->user : $this->user->get($key);
     }
 
-    protected function hash()
+    protected function hash(User $user)
     {
-        return md5($this->user->get('username').$this->user->get('password').app('request')->getIp());
+        return md5($user->get('username').$user->get('password').$this->request->getIp());
     }
 }
