@@ -13,14 +13,17 @@ class Translator
     protected $classes = [];
     protected $locale;
 
+    public function __construct($dir)
+    {
+        $this->available = str_replace($dir, '', glob($dir.'*'));
+        $this->available[] = 'en';
+    }
+
     /**
      * @param string $locale
      */
     public function init($locale)
     {
-        $this->available = str_replace(app('dir.l10n').'/translations/', '', glob(app('dir.l10n').'/translations/*'));
-        $this->available[] = 'en';
-
         $this->setLocale('en')->setLocale($locale);
     }
 

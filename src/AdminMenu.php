@@ -9,11 +9,12 @@ namespace Sydes;
 class AdminMenu
 {
     private $menu;
+    private $filename;
 
-    public function __construct()
+    public function __construct($filename)
     {
-        $this->storage = app('dir.site').'/'.app('site.id').'/menu.php';
-        $this->menu = file_exists($this->storage) ? include $this->storage : [];
+        $this->filename = $filename;
+        $this->menu = file_exists($this->filename) ? include $this->filename : [];
     }
 
     public function getMenu()
@@ -108,6 +109,6 @@ class AdminMenu
 
     public function save()
     {
-        array2file($this->menu, $this->storage);
+        array2file($this->menu, $this->filename);
     }
 }

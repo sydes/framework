@@ -79,7 +79,7 @@ class FormBuilder
      */
     public static function field($fieldType, $name, $value = null, $settings = [])
     {
-        $fields = app()['formFields'];
+        $fields = app('form.fields');
 
         if (!isset($fields[$fieldType])) {
             throw new \InvalidArgumentException(t('field_not_exists', ['name' => $fieldType]));

@@ -8,11 +8,18 @@ namespace Sydes;
 
 class Api
 {
-    private $host = 'http://api.sydes.ru/';
+    private $host;
+    private $version;
+
+    public function __construct($ver, $host)
+    {
+        $this->version = $ver;
+        $this->host = $host;
+    }
 
     public function checkUpdate()
     {
-        return $this->get('update/check/'.SYDES_VERSION);
+        return $this->get('update/check/'.$this->version);
     }
 
     public function getLocales()

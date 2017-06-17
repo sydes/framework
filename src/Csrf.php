@@ -22,8 +22,10 @@ class Csrf
      * @param int $storageLimit
      * @throws \RuntimeException if the strength too small
      */
-    public function __construct($strength = 16, $storageLimit = 200)
+    public function __construct(Http\Request $request, $strength = 16, $storageLimit = 200)
     {
+        $this->request = $request;
+
         if ($strength < 16) {
             throw new \RuntimeException('Minimum strength of CSRF token is 16');
         }
@@ -39,9 +41,8 @@ class Csrf
 
     public function check()
     {
-        $request = app('request');
-        if (in_array($request->getMethod(), ['POST', 'PUT', 'DELETE', 'PATCH'])) {
-            $body = $request->getParsedBody();
+        if (in_array($this->request->getMethod(), ['POST', 'PUT', 'DELETE', 'PATCH'])) {
+            $body = $this->request->getParsedBody();
             $body = $body ? (array)$body : [];
             $name = ifsetor($body['csrf_name'], false);
             $value = ifsetor($body['csrf_value'], false);
@@ -61,8 +62,7 @@ class Csrf
 
     public function appendHeader(ResponseInterface &$response)
     {
-        $request = app('request');
-        if (!in_array($request->getMethod(), ['POST', 'PUT', 'DELETE', 'PATCH']) || !$request->isAjax()) {
+        if (!in_array($this->request->getMethod(), ['POST', 'PUT', 'DELETE', 'PATCH']) || !$this->request->isAjax()) {
             return;
         }
 
