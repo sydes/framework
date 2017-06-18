@@ -7,8 +7,6 @@
 
 namespace Sydes\Services;
 
-use Sydes\Settings\Container as Settings;
-use Sydes\Settings\FileDriver;
 use Zend\Diactoros\ServerRequestFactory;
 
 class DefaultServicesProvider implements ServiceProviderInterface
@@ -31,24 +29,5 @@ class DefaultServicesProvider implements ServiceProviderInterface
                 $r->getProtocolVersion()
             );
         });
-
-        $c->set('renderer', function () use ($c) {
-            $class = 'Sydes\Renderer\\'.ucfirst($c->get('section'));
-
-            return new $class;
-        });
-
-        $c->set('app', function () use ($c) {
-            $path = $c->get('dir.storage').'/app.php';
-
-            return new Settings($path, new FileDriver());
-        });
-
-        $c->set('site', function () use ($c) {
-            $path = $c->get('dir.site').'/'.$c->get('site.id').'/config.php';
-
-            return new Settings($path, new FileDriver());
-        });
-
     }
 }
