@@ -12,10 +12,12 @@ class Translator
     protected $container = [];
     protected $classes = [];
     protected $locale;
+    protected $dir;
 
     public function __construct($dir)
     {
-        $this->available = str_replace($dir, '', glob($dir.'*'));
+        $this->dir = $dir;
+        $this->available = str_replace($dir.'/', '', glob($dir.'/*'));
         $this->available[] = 'en';
     }
 
@@ -102,7 +104,7 @@ class Translator
 
         $paths = [
             $base.'/languages/'.$this->locale.'.php',
-            app('dir.l10n').'/translations/'.$this->locale.'/'.$type.'s/'.$name.'.php',
+            $this->dir.'/'.$this->locale.'/'.$type.'s/'.$name.'.php',
             $base.'/languages/en.php',
         ];
 
