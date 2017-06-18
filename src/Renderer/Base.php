@@ -7,14 +7,22 @@
 namespace Sydes\Renderer;
 
 use Sydes\Document;
+use Sydes\Event;
 use Sydes\View\View;
 
 class Base
 {
     /** @var Document */
     protected $document;
+    /** @var Event */
+    protected $event;
     protected $head = [];
     protected $footer = [];
+
+    public function __construct(Event $event)
+    {
+        $this->event = $event;
+    }
 
     public function prepare(Document $doc)
     {
