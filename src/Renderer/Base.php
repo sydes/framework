@@ -76,7 +76,7 @@ class Base
         $this->head[] = empty($this->document->styles) ? '' :
             '<style>'."\n".implode("\n\n", $this->document->styles)."\n".'</style>';
 
-        app('event')->trigger('head.filled', [&$this->head]);
+        $this->event->trigger('head.filled', [&$this->head]);
     }
 
     protected function fillFooter()
@@ -94,7 +94,7 @@ class Base
 
         $this->footer[] = "<script>\n".implode("\n\n", $this->document->scripts)."\n</script>";
 
-        app('event')->trigger('footer.filled', [&$this->footer]);
+        $this->event->trigger('footer.filled', [&$this->footer]);
     }
 
     protected function getToolbar()
@@ -157,7 +157,7 @@ class Base
 
         $files = array_unique($files);
 
-        app('event')->trigger('assets.prepared', [&$files, $type]);
+        $this->event->trigger('assets.prepared', [&$files, $type]);
 
         return $files;
     }
