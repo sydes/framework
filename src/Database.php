@@ -6,6 +6,8 @@
  */
 namespace Sydes;
 
+use \PDO;
+
 class Database
 {
     /** @var PDO[] */
