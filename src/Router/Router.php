@@ -27,18 +27,18 @@ class Router
     /**
      * Dispatch router for request
      *
-     * @param $method
-     * @param $uri
+     * @param array $files
+     * @param string $method
+     * @param string $uri
      * @return array
      * @link   https://github.com/nikic/FastRoute/blob/master/src/Dispatcher.php
      */
-    public function dispatch($modules, $method, $uri)
+    public function dispatch(array $files, $method, $uri)
     {
-        $callback = function (Route $r) use ($modules) {
-            foreach ($modules as $module) {
-                $class = 'Module\\'.$module.'\\Controller';
-                if (method_exists($class, 'routes')) {
-                    $class::routes($r);
+        $callback = function (Route $r) use ($files) {
+            foreach ($files as $file) {
+                if (file_exists($file)) {
+                    include $file;
                 }
             }
         };
