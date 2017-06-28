@@ -6,14 +6,14 @@
  */
 namespace Sydes\Settings;
 
-use Sydes\Database;
+use Sydes\Db;
 
 class SQLDriver implements DriverInterface
 {
-    /** @var \PDO */
+    /** @var Db */
     private $db;
 
-    public function __construct(Database $db)
+    public function __construct(Db $db)
     {
         $this->db = $db;
     }
@@ -21,8 +21,7 @@ class SQLDriver implements DriverInterface
     public function get($ext)
     {
         $ret = [];
-        $stmt = $this->db->query("SELECT key, value FROM settings WHERE extension = '{$ext}'");
-        $data = $stmt->fetchAll();
+        $data = $this->db->table('settings')->where('extension', $ext)->get();
         foreach ($data as $d) {
             $ret[$d['key']] = json_decode($d['value'], true);
         }
@@ -32,10 +31,17 @@ class SQLDriver implements DriverInterface
 
     public function set($ext, $data)
     {
-        $this->db->exec("DELETE FROM settings WHERE extension = '{$ext}'");
-        $stmt = $this->db->prepare("INSERT INTO settings (extension, key, value) VALUES ('{$ext}', :key, :value)");
+        $this->db->table('settings')->where('extension', $ext)->delete();
+
+        $insert = [];
         foreach ($data as $key => $value) {
-            $stmt->execute(['key' => $key, 'value' => json_encode($value)]);
+            $insert[] = [
+                'extension' => $ext,
+                'key' => $key,
+                'value' => json_encode($value)
+            ];
         }
+
+        $this->db->table('settings')->insert($insert);
     }
 }
