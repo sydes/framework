@@ -37,20 +37,20 @@ class BS4 extends Base
 
         $prefix = '';
         if (isset($attr['prefix'])) {
-            $texts = (array)arrayRemove($attr, 'prefix');
+            $texts = (array)array_remove($attr, 'prefix');
             $prefix .= static::inputAddons($texts);
         }
 
         $suffix = '';
         if (isset($attr['suffix'])) {
-            $texts = (array)arrayRemove($attr, 'suffix');
+            $texts = (array)array_remove($attr, 'suffix');
             $suffix .= static::inputAddons($texts);
         }
 
         $groupClass = ['input-group'];
 
         if (isset($attr['size'])) {
-            $size = arrayRemove($attr, 'size');
+            $size = array_remove($attr, 'size');
             if ($prefix || $suffix) {
                 $groupClass[] = 'input-group-'.$size;
             } else {
@@ -164,7 +164,7 @@ class BS4 extends Base
         $path = $uri->getPath();
         parse_str($uri->getQuery(), $query);
 
-        $page = (int)arrayRemove($query, 'page', 0);
+        $page = (int)array_remove($query, 'page', 0);
         if ($page < 1) {
             $page = 1;
         }
@@ -397,18 +397,18 @@ class BS4 extends Base
     {
         $class = ['btn'];
 
-        $used['button'] = 'btn-'.arrayRemove($attr, 'button', 'secondary');
+        $used['button'] = 'btn-'.array_remove($attr, 'button', 'secondary');
         $class[] = $used['button'];
 
         $used['size'] = '';
         if (isset($attr['size'])) {
-            $used['size'] = 'btn-'.arrayRemove($attr, 'size');
+            $used['size'] = 'btn-'.array_remove($attr, 'size');
             $class[] = $used['size'];
         }
 
         $used['display'] = '';
         if (isset($attr['display'])) {
-            $used['display'] = 'btn-'.arrayRemove($attr, 'display');
+            $used['display'] = 'btn-'.array_remove($attr, 'display');
             $class[] = $used['display'];
         }
 
@@ -429,7 +429,7 @@ class BS4 extends Base
             return '<div>'.t('empty').'</div>';
         }
 
-        $inline = arrayRemove($attr, 'inline', false);
+        $inline = array_remove($attr, 'inline', false);
 
         $divClass = ['form-check'];
         if ($inline) {

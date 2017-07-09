@@ -521,27 +521,6 @@ function sortByWeight($a, $b)
     return $a['weight'] - $b['weight'];
 }
 
-function studly_case($value)
-{
-    return str_replace(' ', '', ucwords(str_replace(['-', '_'], ' ', $value)));
-}
-
-function camel_case($value)
-{
-    return lcfirst(studly_case($value));
-}
-
-function snake_case($str, $delimiter = '_')
-{
-    return strtolower(preg_replace('/(.)(?=[A-Z])/', '$1'.$delimiter, $str));
-}
-
-function str_replace_once($search, $replace, $text)
-{
-    $pos = strpos($text, $search);
-    return $pos!==false ? substr_replace($text, $replace, $pos, strlen($search)) : $text;
-}
-
 function lower($string)
 {
     return mb_strtolower($string, 'UTF-8');
@@ -554,7 +533,7 @@ function lower($string)
  * @param mixed $default
  * @return mixed value
  */
-function arrayRemove(array &$arr, $key, $default = null)
+function array_remove(array &$arr, $key, $default = null)
 {
     if (!array_key_exists($key, $arr)) {
         return $default;
