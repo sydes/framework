@@ -205,7 +205,7 @@ class Request extends ServerRequest
      */
     public function all()
     {
-        return array_replace_recursive($this->getParsedBody(), $this->getQueryParams());
+        return $this->getRealMethod() == 'GET' ? $this->getQueryParams() : $this->getParsedBody();
     }
 
     public function getIp()

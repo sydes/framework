@@ -141,13 +141,13 @@ class BS4 extends Base
      * @param RequestInterface $request
      * @param int              $total    Total pages
      * @param int              $maxLinks Max width of pagination, odd number is better
-     * @param bool             $prevNext To show links for next page?
+     * @param bool             $arrows   To show links for next page?
      * @param array            $text     Texts for additional links
      * @param string           $class    Html class for container
      * @return string
      */
     public static function pagination(RequestInterface $request, $total, $maxLinks = 7,
-        $prevNext = false, array $text = [], $class = 'pagination')
+        $arrows = false, array $text = [], $class = 'pagination')
     {
         if ($total < 2) {
             return '';
@@ -205,10 +205,10 @@ class BS4 extends Base
             }
         }
 
-        if ($prevNext && $page > 1) {
+        if ($arrows && $page > 1) {
             $prev = static::paginationLink($text['prev'], $path, $query + ['page' => $page - 1]);
         }
-        if ($prevNext && $page < $total) {
+        if ($arrows && $page < $total) {
             $next = static::paginationLink($text['next'], $path, $query + ['page' => $page + 1]);
         }
 
@@ -336,9 +336,9 @@ class BS4 extends Base
     }
 
     /**
-     * @param array       $items
+     * @param array      $items
      * @param array|bool $label
-     * @param array       $align
+     * @param array      $align
      * @return string
      */
     public static function dropdown(array $items, $label = false, $align = ['right', 'down'])

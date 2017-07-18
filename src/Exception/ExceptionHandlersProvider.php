@@ -32,7 +32,7 @@ class ExceptionHandlersProvider implements ServiceProviderInterface
             return html($c->get('renderer')->render($doc), $e->getCode());
         }));
 
-        $c->set('ConfirmationExceptionHandler', \DI\value(function () {
+        $c->set('ConfirmationExceptionHandler', \DI\value(function () use ($c) {
             $doc = document([
                 'content' => view('main/confirm', [
                     'message'    => t('confirm_deletion'),
