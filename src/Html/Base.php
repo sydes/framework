@@ -120,7 +120,7 @@ class Base
     {
         $str = '';
         foreach ($attr as $key => $value) {
-            if ($value === '' || is_null($value) || $value === false) {
+            if (is_null($value) || $value === false) {
                 continue;
             }
 
@@ -344,7 +344,7 @@ class Base
         $html = '';
         foreach ($items as $val => $title) {
             $opt = [
-                'selected' => $val == $value,
+                'selected' => "$val" === "$value",
                 'value' => $val,
             ];
             $html .= static::tag('option', $title, $opt);
