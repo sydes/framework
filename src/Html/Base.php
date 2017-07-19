@@ -129,8 +129,8 @@ class Base
             } elseif (in_array($key, static::$dataAttributes)) {
                 foreach ($value as $k => $v) {
                     if (is_array($v)) {
-                        $str .= " $key-$k=\"".json_encode($v,
-                                JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT | JSON_HEX_TAG).'"';
+                        $str .= " $key-$k=\"".static::encode(json_encode($v,
+                                JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT | JSON_HEX_TAG)).'"';
                     } else {
                         $str .= " $key-$k=\"".static::encode($v).'"';
                     }
