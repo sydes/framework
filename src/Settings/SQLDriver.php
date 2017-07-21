@@ -6,14 +6,14 @@
  */
 namespace Sydes\Settings;
 
-use Sydes\Db;
+use Sydes\Database\Connection;
 
 class SQLDriver implements DriverInterface
 {
-    /** @var Db */
+    /** @var Connection */
     private $db;
 
-    public function __construct(Db $db)
+    public function __construct(Connection $db)
     {
         $this->db = $db;
     }
@@ -23,7 +23,7 @@ class SQLDriver implements DriverInterface
         $ret = [];
         $data = $this->db->table('settings')->where('extension', $ext)->get();
         foreach ($data as $d) {
-            $ret[$d['key']] = json_decode($d['value'], true);
+            $ret[$d->key] = json_decode($d->value, true);
         }
 
         return $ret;
