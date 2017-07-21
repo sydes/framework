@@ -311,28 +311,28 @@ class BS4 extends Base
     }
 
     /**
-     * @param string $title
-     * @param string $body
-     * @param string $footer
-     * @param string $form_url
+     * @param array $params
      * @return string
      */
-    public static function modal($title, $body = '', $footer = '', $form_url = '')
+    public static function modal($params)
     {
-        $html = '
-        <div class="modal-header">
-            <h5 class="modal-title">'.$title.'</h5>
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-        </div>
-        <div class="modal-body">'.$body.'</div>
-        <div class="modal-footer">'.$footer.'</div>
-        ';
-
-        if ($form_url) {
-            $html = '<form name="modal-form" method="post" enctype="multipart/form-data" action="'.$form_url.'">'.$html.'</form>';
+        if (!isset($params['footer'])) {
+            $params['footer'] = '';
+        }
+        if (!isset($params['size'])) {
+            $params['size'] = '';
         }
 
-        return $html;
+        $title = '<div class="modal-header"><div class="modal-title">'.$params['title'].'</div>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button></div>';
+        $body = $params['body'] ? '<div class="modal-body">'.$params['body'].'</div>' : '';
+        $footer = $params['footer'] ? '<div class="modal-footer">'.$params['footer'].'</div>' : '';
+        $modal = '<div class="modal fade" id="'.$params['id'].'" tabindex="-1" role="dialog">'.
+            '<div class="modal-dialog '.$params['size'].'" role="document">'.
+            '<div class="modal-content">'.$title.$body.$footer.'</div></div></div>';
+
+        return $modal;
     }
 
     /**
