@@ -17,6 +17,7 @@ class Document
     public $scripts = [];
     public $css = [];
     public $styles = [];
+    public $code = [];
 
     public $context_menu = ['left' => ['weight' => 0, 'items' => []], 'right' => ['weight' => 2, 'items' => []]];
     public $js_syd = ['l10n' => [], 'settings' => []];
@@ -245,5 +246,21 @@ class Document
     {
         unset($this->context_menu[$position]['items'][$name]);
         return $this;
+    }
+
+    /**
+     * @param string $html
+     */
+    public function addCode($html)
+    {
+        $this->code[] = $html;
+    }
+
+    /**
+     * @param array $params
+     */
+    public function addModal($params)
+    {
+        $this->code[] = \H::modal($params);
     }
 }
