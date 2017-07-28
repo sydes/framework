@@ -1,4 +1,7 @@
 <?php
+/**
+ * @see Illuminate/Support/Fluent
+ */
 
 namespace Sydes\Support;
 

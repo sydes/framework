@@ -1,4 +1,7 @@
 <?php
+/**
+ * @see Illuminate/Support/Collection
+ */
 
 namespace Sydes\Support;
 
@@ -107,7 +110,7 @@ class Collection implements ArrayAccess, Countable, IteratorAggregate, JsonSeria
         $count = $this->count();
 
         if ($count == 0) {
-            return;
+            return null;
         }
 
         $values = isset($key) ? $this->pluck($key) : $this;

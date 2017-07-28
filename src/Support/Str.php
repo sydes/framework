@@ -1,4 +1,7 @@
 <?php
+/**
+ * @see Illuminate/Support/Str
+ */
 
 namespace Sydes\Support;
 

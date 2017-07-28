@@ -1,4 +1,7 @@
 <?php
+/**
+ * @see Illuminate/Support/Arr
+ */
 
 namespace Sydes\Support;
 
