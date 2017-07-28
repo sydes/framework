@@ -17,7 +17,8 @@ class Document
     public $scripts = [];
     public $css = [];
     public $styles = [];
-    public $code = [];
+    public $rawHead = [];
+    public $rawFooter = [];
 
     public $context_menu = ['left' => ['weight' => 0, 'items' => []], 'right' => ['weight' => 2, 'items' => []]];
     public $js_syd = ['l10n' => [], 'settings' => []];
@@ -251,9 +252,17 @@ class Document
     /**
      * @param string $html
      */
-    public function addCode($html)
+    public function addToHead($html)
     {
-        $this->code[] = $html;
+        $this->rawHead[] = $html;
+    }
+
+    /**
+     * @param string $html
+     */
+    public function addToFooter($html)
+    {
+        $this->rawFooter[] = $html;
     }
 
     /**
@@ -261,6 +270,6 @@ class Document
      */
     public function addModal($params)
     {
-        $this->code[] = \H::modal($params);
+        $this->rawFooter[] = \H::modal($params);
     }
 }
