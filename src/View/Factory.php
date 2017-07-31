@@ -73,7 +73,7 @@ class Factory
     /**
      * Get the appropriate view engine for the given path.
      *
-     * @param  string $path
+     * @param string $path
      * @return EngineInterface
      */
     public function getEngineFromPath($path)
@@ -103,9 +103,9 @@ class Factory
     /**
      * Register a valid view extension and its engine.
      *
-     * @param  string   $extension
-     * @param  string   $engine
-     * @param  \Closure $resolver
+     * @param string   $extension
+     * @param string   $engine
+     * @param \Closure $resolver
      */
     public function addExtension($extension, $engine, \Closure $resolver = null)
     {

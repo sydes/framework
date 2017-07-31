@@ -39,7 +39,7 @@ class Builder
     /**
      * Create a new database Schema manager.
      *
-     * @param  Connection $connection
+     * @param Connection $connection
      */
     public function __construct(Connection $connection)
     {
@@ -50,8 +50,7 @@ class Builder
     /**
      * Set the default string length for migrations.
      *
-     * @param  int $length
-     * @return void
+     * @param int $length
      */
     public static function defaultStringLength($length)
     {
@@ -61,7 +60,7 @@ class Builder
     /**
      * Determine if the given table exists.
      *
-     * @param  string $table
+     * @param string $table
      * @return bool
      */
     public function hasTable($table)
@@ -76,8 +75,8 @@ class Builder
     /**
      * Determine if the given table has a given column.
      *
-     * @param  string $table
-     * @param  string $column
+     * @param string $table
+     * @param string $column
      * @return bool
      */
     public function hasColumn($table, $column)
@@ -90,8 +89,8 @@ class Builder
     /**
      * Determine if the given table has given columns.
      *
-     * @param  string $table
-     * @param  array  $columns
+     * @param string $table
+     * @param array  $columns
      * @return bool
      */
     public function hasColumns($table, array $columns)
@@ -110,7 +109,7 @@ class Builder
     /**
      * Get the column listing for a given table.
      *
-     * @param  string $table
+     * @param string $table
      * @return array
      */
     public function getColumnListing($table)
@@ -125,9 +124,8 @@ class Builder
     /**
      * Modify a table on the schema.
      *
-     * @param  string   $table
-     * @param  \Closure $callback
-     * @return void
+     * @param string   $table
+     * @param \Closure $callback
      */
     public function table($table, Closure $callback)
     {
@@ -137,9 +135,8 @@ class Builder
     /**
      * Create a new table on the schema.
      *
-     * @param  string   $table
-     * @param  \Closure $callback
-     * @return void
+     * @param string   $table
+     * @param \Closure $callback
      */
     public function create($table, Closure $callback)
     {
@@ -153,8 +150,7 @@ class Builder
     /**
      * Drop a table from the schema.
      *
-     * @param  string $table
-     * @return void
+     * @param string $table
      */
     public function drop($table)
     {
@@ -166,8 +162,7 @@ class Builder
     /**
      * Drop a table from the schema if it exists.
      *
-     * @param  string $table
-     * @return void
+     * @param string $table
      */
     public function dropIfExists($table)
     {
@@ -179,8 +174,6 @@ class Builder
     /**
      * Drop all tables from the database.
      *
-     * @return void
-     *
      * @throws \LogicException
      */
     public function dropAllTables()
@@ -191,9 +184,8 @@ class Builder
     /**
      * Rename a table on the schema.
      *
-     * @param  string $from
-     * @param  string $to
-     * @return void
+     * @param string $from
+     * @param string $to
      */
     public function rename($from, $to)
     {
@@ -229,8 +221,7 @@ class Builder
     /**
      * Execute the blueprint to build / modify the table.
      *
-     * @param  Blueprint $blueprint
-     * @return void
+     * @param Blueprint $blueprint
      */
     protected function build(Blueprint $blueprint)
     {
@@ -240,8 +231,8 @@ class Builder
     /**
      * Create a new command set with a Closure.
      *
-     * @param  string        $table
-     * @param  \Closure|null $callback
+     * @param string        $table
+     * @param \Closure|null $callback
      * @return Blueprint
      */
     protected function createBlueprint($table, Closure $callback = null)
@@ -266,7 +257,7 @@ class Builder
     /**
      * Set the database connection instance.
      *
-     * @param  Connection $connection
+     * @param Connection $connection
      * @return $this
      */
     public function setConnection(Connection $connection)
@@ -279,8 +270,7 @@ class Builder
     /**
      * Set the Schema Blueprint resolver callback.
      *
-     * @param  \Closure $resolver
-     * @return void
+     * @param \Closure $resolver
      */
     public function blueprintResolver(Closure $resolver)
     {

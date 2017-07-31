@@ -20,9 +20,9 @@ abstract class Grammar extends BaseGrammar
     /**
      * Compile a rename column command.
      *
-     * @param  Blueprint $blueprint
-     * @param  Fluent           $command
-     * @param  Connection       $connection
+     * @param Blueprint $blueprint
+     * @param Fluent           $command
+     * @param Connection       $connection
      * @return array
      */
     public function compileRenameColumn(Blueprint $blueprint, Fluent $command, Connection $connection)
@@ -34,9 +34,9 @@ abstract class Grammar extends BaseGrammar
     /**
      * Compile a change column command into a series of SQL statements.
      *
-     * @param  Blueprint $blueprint
-     * @param  Fluent           $command
-     * @param  Connection       $connection
+     * @param Blueprint $blueprint
+     * @param Fluent           $command
+     * @param Connection       $connection
      * @return array
      *
      * @throws \RuntimeException
@@ -50,8 +50,8 @@ abstract class Grammar extends BaseGrammar
     /**
      * Compile a foreign key command.
      *
-     * @param  Blueprint $blueprint
-     * @param  Fluent           $command
+     * @param Blueprint $blueprint
+     * @param Fluent           $command
      * @return string
      */
     public function compileForeign(Blueprint $blueprint, Fluent $command)
@@ -90,7 +90,7 @@ abstract class Grammar extends BaseGrammar
     /**
      * Compile the blueprint's column definitions.
      *
-     * @param  Blueprint $blueprint
+     * @param Blueprint $blueprint
      * @return array
      */
     protected function getColumns(Blueprint $blueprint)
@@ -112,7 +112,7 @@ abstract class Grammar extends BaseGrammar
     /**
      * Get the SQL for the column data type.
      *
-     * @param  Fluent $column
+     * @param Fluent $column
      * @return string
      */
     protected function getType(Fluent $column)
@@ -123,9 +123,9 @@ abstract class Grammar extends BaseGrammar
     /**
      * Add the column modifiers to the definition.
      *
-     * @param  string                           $sql
-     * @param  Blueprint $blueprint
-     * @param  Fluent           $column
+     * @param string                           $sql
+     * @param Blueprint $blueprint
+     * @param Fluent           $column
      * @return string
      */
     protected function addModifiers($sql, Blueprint $blueprint, Fluent $column)
@@ -142,8 +142,8 @@ abstract class Grammar extends BaseGrammar
     /**
      * Get the primary key command if it exists on the blueprint.
      *
-     * @param  Blueprint $blueprint
-     * @param  string                           $name
+     * @param Blueprint $blueprint
+     * @param string                           $name
      * @return Fluent|null
      */
     protected function getCommandByName(Blueprint $blueprint, $name)
@@ -158,8 +158,8 @@ abstract class Grammar extends BaseGrammar
     /**
      * Get all of the commands with a given name.
      *
-     * @param  Blueprint $blueprint
-     * @param  string                           $name
+     * @param Blueprint $blueprint
+     * @param string                           $name
      * @return array
      */
     protected function getCommandsByName(Blueprint $blueprint, $name)
@@ -172,8 +172,8 @@ abstract class Grammar extends BaseGrammar
     /**
      * Add a prefix to an array of values.
      *
-     * @param  string $prefix
-     * @param  array  $values
+     * @param string $prefix
+     * @param array  $values
      * @return array
      */
     public function prefixArray($prefix, array $values)
@@ -186,7 +186,7 @@ abstract class Grammar extends BaseGrammar
     /**
      * Wrap a table in keyword identifiers.
      *
-     * @param  mixed $table
+     * @param mixed $table
      * @return string
      */
     public function wrapTable($table)
@@ -199,8 +199,8 @@ abstract class Grammar extends BaseGrammar
     /**
      * Wrap a value in keyword identifiers.
      *
-     * @param  \Sydes\Database\Query\Expression|string $value
-     * @param  bool                                    $prefixAlias
+     * @param \Sydes\Database\Query\Expression|string $value
+     * @param bool                                    $prefixAlias
      * @return string
      */
     public function wrap($value, $prefixAlias = false)
@@ -213,7 +213,7 @@ abstract class Grammar extends BaseGrammar
     /**
      * Format a value so that it can be used in "default" clauses.
      *
-     * @param  mixed $value
+     * @param mixed $value
      * @return string
      */
     protected function getDefaultValue($value)

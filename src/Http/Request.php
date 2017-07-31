@@ -131,7 +131,7 @@ class Request extends ServerRequest
     /**
      * Determine if the given input key is an empty string for "has".
      *
-     * @param  string $key
+     * @param string $key
      * @return bool
      */
     protected function isEmptyString($key)
@@ -183,7 +183,7 @@ class Request extends ServerRequest
     /**
      * Get a subset of the items from the input data.
      *
-     * @param  array|mixed $keys
+     * @param array|mixed $keys
      * @return array
      */
     public function only($keys)

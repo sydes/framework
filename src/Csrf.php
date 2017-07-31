@@ -90,8 +90,8 @@ class Csrf
      * Validate CSRF token from current request
      * against token value stored in $_SESSION
      *
-     * @param  string $name  CSRF name
-     * @param  string $value CSRF token value
+     * @param string $name  CSRF name
+     * @param string $value CSRF token value
      *
      * @return bool
      */

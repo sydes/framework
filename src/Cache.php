@@ -19,7 +19,7 @@ class Cache
     /**
      * Create a new file cache instance.
      *
-     * @param  string $directory
+     * @param string $directory
      */
     public function __construct($directory)
     {
@@ -29,8 +29,8 @@ class Cache
     /**
      * Store an item in the cache indefinitely.
      *
-     * @param  string $key
-     * @param  mixed  $value
+     * @param string $key
+     * @param mixed  $value
      */
     public function forever($key, $value)
     {
@@ -40,9 +40,9 @@ class Cache
     /**
      * Store an item in the cache for a given number of seconds.
      *
-     * @param  string $key
-     * @param  mixed  $value
-     * @param  int    $seconds
+     * @param string $key
+     * @param mixed  $value
+     * @param int    $seconds
      */
     public function put($key, $value, $seconds = 2678400)
     {
@@ -56,7 +56,7 @@ class Cache
     /**
      * Get the expiration time based on the given seconds.
      *
-     * @param  int $seconds
+     * @param int $seconds
      * @return int
      */
     protected function expiration($seconds)
@@ -70,7 +70,7 @@ class Cache
     /**
      * Get the full path for the given cache key.
      *
-     * @param  string $key
+     * @param string $key
      * @return string
      */
     protected function path($key)
@@ -93,9 +93,9 @@ class Cache
     /**
      * Get an item from the cache, or store the default value.
      *
-     * @param  string   $key
-     * @param  int      $seconds
-     * @param  \Closure $callback
+     * @param string   $key
+     * @param int      $seconds
+     * @param \Closure $callback
      * @return mixed
      */
     public function remember($key, \Closure $callback, $seconds = 2678400)
@@ -112,8 +112,8 @@ class Cache
     /**
      * Retrieve an item from the cache by key.
      *
-     * @param  string $key
-     * @param  mixed  $default
+     * @param string $key
+     * @param mixed  $default
      * @return mixed
      */
     public function get($key, $default = null)
@@ -138,7 +138,7 @@ class Cache
     /**
      * Remove an item from the cache.
      *
-     * @param  string $key
+     * @param string $key
      * @return bool
      */
     public function forget($key)

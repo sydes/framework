@@ -121,7 +121,7 @@ class Document
     /**
      * Adds a style and script
      *
-     * @param              $key
+     * @param string       $key
      * @param string|array $js
      * @param string|array $css
      * @param int          $weight

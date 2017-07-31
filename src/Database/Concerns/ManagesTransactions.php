@@ -10,8 +10,8 @@ trait ManagesTransactions
     /**
      * Execute a Closure within a transaction.
      *
-     * @param  \Closure $callback
-     * @param  int      $attempts
+     * @param \Closure $callback
+     * @param int      $attempts
      * @return mixed
      *
      * @throws \Exception|\Throwable
@@ -49,10 +49,9 @@ trait ManagesTransactions
     /**
      * Handle an exception encountered when running a transacted statement.
      *
-     * @param  \Exception $e
-     * @param  int        $currentAttempt
-     * @param  int        $maxAttempts
-     * @return void
+     * @param \Exception $e
+     * @param int        $currentAttempt
+     * @param int        $maxAttempts
      *
      * @throws \Exception
      */
@@ -86,7 +85,6 @@ trait ManagesTransactions
     /**
      * Start a new database transaction.
      *
-     * @return void
      * @throws \Exception
      */
     public function beginTransaction()
@@ -114,8 +112,6 @@ trait ManagesTransactions
 
     /**
      * Create a save point within the database.
-     *
-     * @return void
      */
     protected function createSavepoint()
     {
@@ -126,8 +122,6 @@ trait ManagesTransactions
 
     /**
      * Commit the active database transaction.
-     *
-     * @return void
      */
     public function commit()
     {
@@ -141,8 +135,7 @@ trait ManagesTransactions
     /**
      * Rollback the active database transaction.
      *
-     * @param  int|null $toLevel
-     * @return void
+     * @param int|null $toLevel
      */
     public function rollBack($toLevel = null)
     {
@@ -168,8 +161,7 @@ trait ManagesTransactions
     /**
      * Perform a rollback within the database.
      *
-     * @param  int $toLevel
-     * @return void
+     * @param int $toLevel
      */
     protected function performRollBack($toLevel)
     {

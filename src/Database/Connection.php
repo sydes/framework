@@ -113,10 +113,10 @@ class Connection implements ConnectionInterface
     /**
      * Create a new database connection instance.
      *
-     * @param  \PDO|\Closure $pdo
-     * @param  string        $database
-     * @param  string        $tablePrefix
-     * @param  array         $config
+     * @param \PDO|\Closure $pdo
+     * @param string        $database
+     * @param string        $tablePrefix
+     * @param array         $config
      */
     public function __construct($pdo, $database = '', $tablePrefix = '', array $config = [])
     {
@@ -141,8 +141,6 @@ class Connection implements ConnectionInterface
 
     /**
      * Set the query grammar to the default implementation.
-     *
-     * @return void
      */
     public function useDefaultQueryGrammar()
     {
@@ -161,8 +159,6 @@ class Connection implements ConnectionInterface
 
     /**
      * Set the schema grammar to the default implementation.
-     *
-     * @return void
      */
     public function useDefaultSchemaGrammar()
     {
@@ -181,8 +177,6 @@ class Connection implements ConnectionInterface
 
     /**
      * Set the query post processor to the default implementation.
-     *
-     * @return void
      */
     public function useDefaultPostProcessor()
     {
@@ -216,7 +210,7 @@ class Connection implements ConnectionInterface
     /**
      * Begin a fluent query against a database table.
      *
-     * @param  string $table
+     * @param string $table
      * @return \Sydes\Database\Query\Builder
      */
     public function table($table)
@@ -239,9 +233,9 @@ class Connection implements ConnectionInterface
     /**
      * Run a select statement and return a single result.
      *
-     * @param  string $query
-     * @param  array  $bindings
-     * @param  bool   $useReadPdo
+     * @param string $query
+     * @param array  $bindings
+     * @param bool   $useReadPdo
      * @return mixed
      */
     public function selectOne($query, $bindings = [], $useReadPdo = true)
@@ -254,8 +248,8 @@ class Connection implements ConnectionInterface
     /**
      * Run a select statement against the database.
      *
-     * @param  string $query
-     * @param  array  $bindings
+     * @param string $query
+     * @param array  $bindings
      * @return array
      */
     public function selectFromWriteConnection($query, $bindings = [])
@@ -266,9 +260,9 @@ class Connection implements ConnectionInterface
     /**
      * Run a select statement against the database.
      *
-     * @param  string $query
-     * @param  array  $bindings
-     * @param  bool   $useReadPdo
+     * @param string $query
+     * @param array  $bindings
+     * @param bool   $useReadPdo
      * @return array
      */
     public function select($query, $bindings = [], $useReadPdo = true)
@@ -295,9 +289,9 @@ class Connection implements ConnectionInterface
     /**
      * Run a select statement against the database and returns a generator.
      *
-     * @param  string $query
-     * @param  array  $bindings
-     * @param  bool   $useReadPdo
+     * @param string $query
+     * @param array  $bindings
+     * @param bool   $useReadPdo
      * @return \Generator
      */
     public function cursor($query, $bindings = [], $useReadPdo = true)
@@ -333,7 +327,7 @@ class Connection implements ConnectionInterface
     /**
      * Configure the PDO prepared statement.
      *
-     * @param  \PDOStatement $statement
+     * @param \PDOStatement $statement
      * @return \PDOStatement
      */
     protected function prepared(PDOStatement $statement)
@@ -346,7 +340,7 @@ class Connection implements ConnectionInterface
     /**
      * Get the PDO connection to use for a select query.
      *
-     * @param  bool $useReadPdo
+     * @param bool $useReadPdo
      * @return \PDO
      */
     protected function getPdoForSelect($useReadPdo = true)
@@ -357,8 +351,8 @@ class Connection implements ConnectionInterface
     /**
      * Run an insert statement against the database.
      *
-     * @param  string $query
-     * @param  array  $bindings
+     * @param string $query
+     * @param array  $bindings
      * @return bool
      */
     public function insert($query, $bindings = [])
@@ -369,8 +363,8 @@ class Connection implements ConnectionInterface
     /**
      * Run an update statement against the database.
      *
-     * @param  string $query
-     * @param  array  $bindings
+     * @param string $query
+     * @param array  $bindings
      * @return int
      */
     public function update($query, $bindings = [])
@@ -381,8 +375,8 @@ class Connection implements ConnectionInterface
     /**
      * Run a delete statement against the database.
      *
-     * @param  string $query
-     * @param  array  $bindings
+     * @param string $query
+     * @param array  $bindings
      * @return int
      */
     public function delete($query, $bindings = [])
@@ -393,8 +387,8 @@ class Connection implements ConnectionInterface
     /**
      * Execute an SQL statement and return the boolean result.
      *
-     * @param  string $query
-     * @param  array  $bindings
+     * @param string $query
+     * @param array  $bindings
      * @return bool
      */
     public function statement($query, $bindings = [])
@@ -415,8 +409,8 @@ class Connection implements ConnectionInterface
     /**
      * Run an SQL statement and get the number of rows affected.
      *
-     * @param  string $query
-     * @param  array  $bindings
+     * @param string $query
+     * @param array  $bindings
      * @return int
      */
     public function affectingStatement($query, $bindings = [])
@@ -442,7 +436,7 @@ class Connection implements ConnectionInterface
     /**
      * Run a raw, unprepared query against the PDO connection.
      *
-     * @param  string $query
+     * @param string $query
      * @return bool
      */
     public function unprepared($query)
@@ -459,7 +453,7 @@ class Connection implements ConnectionInterface
     /**
      * Execute the given callback in "dry run" mode.
      *
-     * @param  \Closure $callback
+     * @param \Closure $callback
      * @return array
      */
     public function pretend(Closure $callback)
@@ -481,7 +475,7 @@ class Connection implements ConnectionInterface
     /**
      * Execute the given callback in "dry run" mode.
      *
-     * @param  \Closure $callback
+     * @param \Closure $callback
      * @return array
      */
     protected function withFreshQueryLog($callback)
@@ -508,9 +502,8 @@ class Connection implements ConnectionInterface
     /**
      * Bind values to their parameters in the given statement.
      *
-     * @param  \PDOStatement $statement
-     * @param  array         $bindings
-     * @return void
+     * @param \PDOStatement $statement
+     * @param array         $bindings
      */
     public function bindValues($statement, $bindings)
     {
@@ -525,7 +518,7 @@ class Connection implements ConnectionInterface
     /**
      * Prepare the query bindings for execution.
      *
-     * @param  array $bindings
+     * @param array $bindings
      * @return array
      */
     public function prepareBindings(array $bindings)
@@ -549,9 +542,9 @@ class Connection implements ConnectionInterface
     /**
      * Run a SQL statement and log its execution context.
      *
-     * @param  string   $query
-     * @param  array    $bindings
-     * @param  \Closure $callback
+     * @param string   $query
+     * @param array    $bindings
+     * @param \Closure $callback
      * @return mixed
      *
      * @throws \Sydes\Database\QueryException
@@ -585,9 +578,9 @@ class Connection implements ConnectionInterface
     /**
      * Run a SQL statement.
      *
-     * @param  string   $query
-     * @param  array    $bindings
-     * @param  \Closure $callback
+     * @param string   $query
+     * @param array    $bindings
+     * @param \Closure $callback
      * @return mixed
      *
      * @throws \Sydes\Database\QueryException
@@ -616,10 +609,9 @@ class Connection implements ConnectionInterface
     /**
      * Log a query in the connection's query log.
      *
-     * @param  string  $query
-     * @param  array   $bindings
-     * @param  float|null  $time
-     * @return void
+     * @param string  $query
+     * @param array   $bindings
+     * @param float|null  $time
      */
     public function logQuery($query, $bindings, $time = null)
     {
@@ -631,7 +623,7 @@ class Connection implements ConnectionInterface
     /**
      * Get the elapsed time since a given starting point.
      *
-     * @param  int $start
+     * @param int $start
      * @return float
      */
     protected function getElapsedTime($start)
@@ -641,8 +633,6 @@ class Connection implements ConnectionInterface
 
     /**
      * Disconnect from the underlying PDO connection.
-     *
-     * @return void
      */
     public function disconnect()
     {
@@ -652,7 +642,7 @@ class Connection implements ConnectionInterface
     /**
      * Get a new raw query expression.
      *
-     * @param  mixed $value
+     * @param mixed $value
      * @return \Sydes\Database\Query\Expression
      */
     public function raw($value)
@@ -695,7 +685,7 @@ class Connection implements ConnectionInterface
     /**
      * Set the PDO connection.
      *
-     * @param  \PDO|null $pdo
+     * @param \PDO|null $pdo
      * @return $this
      */
     public function setPdo($pdo)
@@ -710,7 +700,7 @@ class Connection implements ConnectionInterface
     /**
      * Set the PDO connection used for reading.
      *
-     * @param  \PDO|null $pdo
+     * @param \PDO|null $pdo
      * @return $this
      */
     public function setReadPdo($pdo)
@@ -733,7 +723,7 @@ class Connection implements ConnectionInterface
     /**
      * Get an option from the configuration options.
      *
-     * @param  string|null $option
+     * @param string|null $option
      * @return mixed
      */
     public function getConfig($option = null)
@@ -764,8 +754,7 @@ class Connection implements ConnectionInterface
     /**
      * Set the query grammar used by the connection.
      *
-     * @param  Query\Grammars\Grammar $grammar
-     * @return void
+     * @param Query\Grammars\Grammar $grammar
      */
     public function setQueryGrammar(Query\Grammars\Grammar $grammar)
     {
@@ -785,8 +774,7 @@ class Connection implements ConnectionInterface
     /**
      * Set the schema grammar used by the connection.
      *
-     * @param  Schema\Grammars\Grammar $grammar
-     * @return void
+     * @param Schema\Grammars\Grammar $grammar
      */
     public function setSchemaGrammar(Schema\Grammars\Grammar $grammar)
     {
@@ -806,8 +794,7 @@ class Connection implements ConnectionInterface
     /**
      * Set the query post processor used by the connection.
      *
-     * @param  Query\Processors\Processor $processor
-     * @return void
+     * @param Query\Processors\Processor $processor
      */
     public function setPostProcessor(Processor $processor)
     {
@@ -836,8 +823,6 @@ class Connection implements ConnectionInterface
 
     /**
      * Clear the query log.
-     *
-     * @return void
      */
     public function flushQueryLog()
     {
@@ -846,8 +831,6 @@ class Connection implements ConnectionInterface
 
     /**
      * Enable the query log on the connection.
-     *
-     * @return void
      */
     public function enableQueryLog()
     {
@@ -856,8 +839,6 @@ class Connection implements ConnectionInterface
 
     /**
      * Disable the query log on the connection.
-     *
-     * @return void
      */
     public function disableQueryLog()
     {
@@ -887,7 +868,7 @@ class Connection implements ConnectionInterface
     /**
      * Set the name of the connected database.
      *
-     * @param  string $database
+     * @param string $database
      */
     public function setDatabaseName($database)
     {
@@ -907,8 +888,7 @@ class Connection implements ConnectionInterface
     /**
      * Set the table prefix in use by the connection.
      *
-     * @param  string $prefix
-     * @return void
+     * @param string $prefix
      */
     public function setTablePrefix($prefix)
     {
@@ -920,7 +900,7 @@ class Connection implements ConnectionInterface
     /**
      * Set the table prefix and return the grammar.
      *
-     * @param  Grammar $grammar
+     * @param Grammar $grammar
      * @return Grammar
      */
     public function withTablePrefix(Grammar $grammar)

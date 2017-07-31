@@ -65,7 +65,7 @@ function token($length)
 /**
  * Get the available container instance.
  *
- * @param  string $id
+ * @param string $id
  * @return mixed|\Psr\Container\ContainerInterface
  */
 function app($id = null)
@@ -508,7 +508,7 @@ function csrf_field()
 /**
  * Generate a form field to spoof the HTTP verb used by forms.
  *
- * @param  string $method
+ * @param string $method
  * @return string
  */
 function method_field($method)

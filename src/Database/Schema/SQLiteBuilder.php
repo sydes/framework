@@ -6,8 +6,6 @@ class SQLiteBuilder extends Builder
 {
     /**
      * Drop all tables from the database.
-     *
-     * @return void
      */
     public function dropAllTables()
     {
@@ -24,8 +22,6 @@ class SQLiteBuilder extends Builder
 
     /**
      * Delete the database file & re-create it.
-     *
-     * @return void
      */
     public function refreshDatabaseFile()
     {

@@ -64,9 +64,9 @@ class View
     /**
      * Add a view instance to the view data.
      *
-     * @param  string $key
-     * @param  string $view
-     * @param  array  $data
+     * @param string $key
+     * @param string $view
+     * @param array  $data
      * @return $this
      */
     public function nest($key, $view, array $data = [])
@@ -77,8 +77,8 @@ class View
     /**
      * Add a piece of data to the view.
      *
-     * @param  string|array $key
-     * @param  mixed        $value
+     * @param string|array $key
+     * @param mixed        $value
      * @return $this
      */
     public function with($key, $value = null)
@@ -105,8 +105,7 @@ class View
     /**
      * Set the path to the view.
      *
-     * @param  string $path
-     * @return void
+     * @param string $path
      */
     public function setPath($path)
     {
