@@ -7,9 +7,11 @@
 
 namespace Sydes\Html;
 
+use Sydes\Support\Traits\Macroable;
+
 class Base
 {
-    protected static $extenders = [];
+    use Macroable;
 
     public static $voidElements = [
         'area' => 1,
@@ -31,34 +33,6 @@ class Base
     ];
 
     public static $dataAttributes = ['data', 'data-ng', 'ng'];
-
-    /**
-     * Extend class with new html generators
-     *
-     * @param string   $name
-     * @param callable $closure
-     */
-    public static function extend($name, callable $closure)
-    {
-        static::$extenders[$name] = $closure;
-    }
-
-    /**
-     * Get the extender by name
-     *
-     * @param string $name
-     * @param array  $arguments
-     * @return string
-     * @throws \InvalidArgumentException
-     */
-    public static function __callStatic($name, array $arguments)
-    {
-        if (!array_key_exists($name, static::$extenders)) {
-            throw new \InvalidArgumentException('Undefined HTML extender "'.$name.'"');
-        }
-
-        return call_user_func_array(static::$extenders[$name], $arguments);
-    }
 
     /**
      * @param string $content
