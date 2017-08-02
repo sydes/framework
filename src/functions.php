@@ -518,7 +518,7 @@ function method_field($method)
 
 function sortByWeight($a, $b)
 {
-    return $a['weight'] - $b['weight'];
+    return isset($a['weight'], $b['weight']) ? $a['weight'] - $b['weight'] : 0;
 }
 
 function lower($string)
