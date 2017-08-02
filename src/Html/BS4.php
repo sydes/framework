@@ -242,6 +242,7 @@ class BS4 extends Base
      */
     public static function tabs(array $items, $current = '', array $attr = [])
     {
+        static $count = 0;
         $titles = [];
         $contents = '';
 
@@ -250,15 +251,17 @@ class BS4 extends Base
 
             $titles[] = [
                 'active' => $active,
-                'url' => '#'.$key,
+                'url' => '#tab'.$count.'-'.$key,
                 'title' => $d['title'],
                 'attr' => [
                     'data-toggle' => 'tab',
                 ]
             ];
 
-            $contents .= '<div class="tab-pane'.$active.'" id="'.$key.'">'.$d['content'].'</div>';
+            $contents .= '<div class="tab-pane'.$active.'" id="tab'.$count.'-'.$key.'">'.$d['content'].'</div>';
         }
+
+        $count++;
 
         return '<div '.static::attr($attr).'>'.static::nav($titles, 'nav-tabs').
             '<div class="tab-content">'.$contents.'</div></div>';
@@ -292,20 +295,24 @@ class BS4 extends Base
      */
     public static function accordion(array $items, $current = '', $independent = false)
     {
+        static $count = 0;
         $html = '';
         $parent = $independent ? '' : 'data-parent=".accordion"';
+
         foreach ($items as $key => $d) {
             $active = $current == $key ? ' show' : '';
             $html .= '
     <div class="card">
-        <div class="card-header" data-toggle="collapse" '.$parent.' data-target="#acc-'.$key.'">
+        <div class="card-header" data-toggle="collapse" '.$parent.' data-target="#acc'.$count.'-'.$key.'">
             '.$d['title'].'
         </div>
-        <div id="acc-'.$key.'" class="collapse'.$active.'">
+        <div id="acc'.$count.'-'.$key.'" class="collapse'.$active.'">
             <div class="card-block">'.$d['content'].'</div>
         </div>
     </div>';
         }
+
+        $count++;
 
         return '<div class="accordion">'.$html.'</div>';
     }
