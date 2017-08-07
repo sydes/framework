@@ -34,8 +34,6 @@ class Builder
     protected $model;
     /** @var string|array */
     protected $locales;
-    /** @var Manager */
-    protected $em;
 
     /**
      * The relationships that should be eager loaded.
@@ -436,17 +434,6 @@ class Builder
     public function setQuery($query)
     {
         $this->query = $query;
-
-        return $this;
-    }
-
-    /**
-     * @param Manager $em
-     * @return $this
-     */
-    public function setManager(Manager $em)
-    {
-        $this->em = $em;
 
         return $this;
     }

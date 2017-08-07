@@ -16,11 +16,11 @@ class Schema
     /**
      * @var Manager
      */
-    protected $manager;
+    protected $em;
 
-    public function __construct(Manager $manager)
+    public function __construct(Manager $em)
     {
-        $this->manager = $manager;
+        $this->em = $em;
     }
 
     /**
@@ -29,7 +29,7 @@ class Schema
     public function create()
     {
         $table = $this->model->getTable();
-        $conn = $this->manager->getConnection();
+        $conn = $this->em->getConnection();
         $schema = $conn->getSchemaBuilder();
         $main = new Event;
         $translated = new Event;
@@ -73,7 +73,7 @@ class Schema
      */
     public function rename($from)
     {
-        $this->manager->getConnection()->getSchemaBuilder()->rename($from, $this->model->getTable());
+        $this->em->getConnection()->getSchemaBuilder()->rename($from, $this->model->getTable());
     }
 
     /**
@@ -81,7 +81,7 @@ class Schema
      */
     public function drop()
     {
-        $conn = $this->manager->getConnection();
+        $conn = $this->em->getConnection();
         $this->model->fillEvents(new Event)->fire('drop', $conn);
 
         $schema = $conn->getSchemaBuilder();

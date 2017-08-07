@@ -17,16 +17,16 @@ class Repository
     /**
      * @var Manager
      */
-    protected $manager;
+    protected $em;
 
     /**
      * @var string|array
      */
     protected $locales;
 
-    public function __construct(Manager $manager)
+    public function __construct(Manager $em)
     {
-        $this->manager = $manager;
+        $this->em = $em;
 
         if ($this->entity) {
             $this->forEntity($this->entity);
@@ -65,7 +65,7 @@ class Repository
      */
     public function save(Model $model)
     {
-        return $this->manager->save($model);
+        return $this->em->save($model);
     }
 
     /**
@@ -76,7 +76,7 @@ class Repository
      */
     public function delete(Model $model)
     {
-        return $this->manager->delete($model);
+        return $this->em->delete($model);
     }
 
     /**
@@ -284,9 +284,9 @@ class Repository
             throw new \RuntimeException("Entity not set in this repository");
         }
 
-        $builder = new Builder(new QueryBuilder($this->manager->getConnection()));
+        $builder = new Builder(new QueryBuilder($this->em->getConnection()));
 
-        return $builder->setLocales($this->locales)->setModel($this->model)->setManager($this->manager);
+        return $builder->setLocales($this->locales)->setModel($this->model);
     }
 
     /**
