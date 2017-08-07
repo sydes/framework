@@ -175,8 +175,9 @@ class Model
     }
 
     /**
-     * @param Model  $model
+     * @param Model  $related
      * @param string $name
+     * @param array  $settings
      * @return Relation
      */
     protected function createRelation(Model $related, $name, $settings)

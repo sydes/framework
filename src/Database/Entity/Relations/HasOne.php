@@ -10,6 +10,7 @@ namespace Sydes\Database\Entity\Relations;
 
 
 use Sydes\Database\Entity\Collection;
+use Sydes\Database\Entity\Model;
 
 class HasOne extends HasOneOrMany
 {
@@ -26,9 +27,9 @@ class HasOne extends HasOneOrMany
     /**
      * Initialize the relation on a set of models.
      *
-     * @param array  $models
-     * @param string $relation
-     * @return array
+     * @param Model[] $models
+     * @param string  $relation
+     * @return Model[]
      */
     public function initRelation(array $models, $relation)
     {
@@ -42,10 +43,10 @@ class HasOne extends HasOneOrMany
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param array      $models
+     * @param Model[]    $models
      * @param Collection $results
      * @param string     $relation
-     * @return array
+     * @return Model[]
      */
     public function match(array $models, Collection $results, $relation)
     {

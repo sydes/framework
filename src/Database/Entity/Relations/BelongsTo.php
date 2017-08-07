@@ -86,7 +86,7 @@ class BelongsTo extends Relation
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param array $models
+     * @param Model[] $models
      */
     public function addEagerConstraints(array $models)
     {
@@ -96,7 +96,7 @@ class BelongsTo extends Relation
     /**
      * Gather the keys from an array of related models.
      *
-     * @param array $models
+     * @param Model[] $models
      * @return array
      */
     protected function getEagerModelKeys(array $models)
@@ -121,9 +121,9 @@ class BelongsTo extends Relation
     /**
      * Initialize the relation on a set of models.
      *
-     * @param array  $models
-     * @param string $relation
-     * @return array
+     * @param Model[] $models
+     * @param string  $relation
+     * @return Model[]
      */
     public function initRelation(array $models, $relation)
     {
@@ -137,10 +137,10 @@ class BelongsTo extends Relation
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param array      $models
+     * @param Model[]    $models
      * @param Collection $results
      * @param string     $relation
-     * @return array
+     * @return Model[]
      */
     public function match(array $models, Collection $results, $relation)
     {

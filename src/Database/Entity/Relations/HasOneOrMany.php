@@ -70,7 +70,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param array $models
+     * @param Model[] $models
      */
     public function addEagerConstraints(array $models)
     {
@@ -82,11 +82,11 @@ abstract class HasOneOrMany extends Relation
     /**
      * Match the eagerly loaded results to their many parents.
      *
-     * @param array      $models
+     * @param Model[]    $models
      * @param Collection $results
      * @param string     $relation
      * @param string     $type
-     * @return array
+     * @return Model[]
      */
     protected function matchOneOrMany(array $models, Collection $results, $relation, $type)
     {

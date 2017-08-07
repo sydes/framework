@@ -8,7 +8,7 @@
 namespace Sydes\Database\Entity;
 
 use Sydes\Database\Connection;
-use Sydes\Database\Query\Builder;
+use Sydes\Database\Query\Builder as QB;
 
 class Manager
 {
@@ -75,11 +75,11 @@ class Manager
     /**
      * Perform a model update operation.
      *
-     * @param Builder $query
+     * @param QB $query
      * @param Model   $model
      * @return bool
      */
-    protected function update(Builder $query, Model $model)
+    protected function update(QB $query, Model $model)
     {
         if ($model->isClean() || $this->fire($model, 'updating', true) === false) {
             return false;
@@ -102,11 +102,11 @@ class Manager
     /**
      * Perform a model insert operation.
      *
-     * @param Builder $query
+     * @param QB $query
      * @param Model   $model
      * @return bool
      */
-    protected function insert(Builder $query, Model $model)
+    protected function insert(QB $query, Model $model)
     {
         if ($this->fire($model, 'inserting', true) === false) {
             return false;
