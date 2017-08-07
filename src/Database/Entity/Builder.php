@@ -245,7 +245,7 @@ class Builder
     {
         $relation = Relation::noConstraints(function () use ($model, $name) {
             try {
-                return $model->getRelationValue($name);
+                return $model->field($name)->relation();
             } catch (\BadMethodCallException $e) {
                 throw new \RuntimeException('Call to undefined relationship '.$name);
             }

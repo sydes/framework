@@ -62,6 +62,20 @@ class Repository
     }
 
     /**
+     * Destroy the models for the given IDs.
+     *
+     * @param  array|int  $ids
+     * @return int
+     */
+    public function destroy($ids)
+    {
+        $ids = is_array($ids) ? $ids : func_get_args();
+        $key = $this->model->getKeyName();
+
+        return $this->newQuery()->whereIn($key, $ids)->delete();
+    }
+
+    /**
      * Begin querying a model with eager loading.
      *
      * @param array|string $relations

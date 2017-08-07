@@ -85,11 +85,14 @@ class Manager
             return false;
         }
 
-        list($main, $trans) = $this->getDirty($model);
+        list($main, $translated) = $this->getDirty($model);
 
+        unset($main[$model->getKeyName()]);
         $query->where($model->getKeyName(), $model->getKey())->update($main);
-        //$this->conn->table($model->getTranslationTable())->updateOrInsert($trans);
-        // TODO
+
+        foreach ($translated as $t) {
+            $this->conn->table($model->getTranslationTable())->updateOrInsert($t['attr'], $t['val']);
+        }
 
         $this->fire($model, 'updated');
 
@@ -109,7 +112,7 @@ class Manager
             return false;
         }
 
-        list($main, $trans) = $this->getDirty($model);
+        list($main, $translated) = $this->getDirty($model);
 
         if ($model->hasIncrementing()) {
             $id = $query->insertGetId($main, $keyName = $model->getKeyName());
@@ -121,7 +124,14 @@ class Manager
             $query->insert($main);
         }
 
-        $this->conn->table($model->getTranslationTable())->insert($trans);
+        foreach ($translated as $i => $t) {
+            if ($model->hasIncrementing()) {
+                $t['attr'][$model->getForeignKey()] = $model->getKey();
+            }
+            $translated[$i] = array_merge($t['attr'], $t['val']);
+        }
+
+        $this->conn->table($model->getTranslationTable())->insert($translated);
 
         $model->setExists(true);
 
@@ -151,12 +161,12 @@ class Manager
 
         $inserts = [];
         foreach ($pivot as $locale => $fields) {
-            $row = [
+            $row['attr'] = [
                 $model->getForeignKey() => $model->getKey(),
                 'locale' => $locale
             ];
             foreach ($fields as $field => $value) {
-                $row[$field] = $value;
+                $row['val'][$field] = $value;
             }
             $inserts[] = $row;
         }

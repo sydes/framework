@@ -41,6 +41,8 @@ class Schema
         $schema->create($table, function (Blueprint $t) use ($main, $conn) {
             if ($this->model->hasIncrementing()) {
                 $t->increments($this->model->getKeyName());
+            } else {
+                $t->primary($this->model->getKeyName());
             }
 
             $main->createTable($t, $conn);
