@@ -71,7 +71,7 @@ trait HasTableInfo
     protected function getPrimaryFromFields()
     {
         foreach ($this->fields as $key => $field) {
-            if (isset($field['primary'])) {
+            if ($field['type'] == 'Primary') {
                 return $key;
             }
         }
