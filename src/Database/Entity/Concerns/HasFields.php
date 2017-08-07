@@ -139,7 +139,7 @@ trait HasFields
         if ($this->isRelational($name)) {
             $rel = $this->createRelation($field->getRelated(), $name, $field->settings());
             $field->setRelation($rel);
-            $field->set($rel->getResults());
+            $field->set(false);
         }
 
         return $field;
