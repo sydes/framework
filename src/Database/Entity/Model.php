@@ -7,11 +7,14 @@
 
 namespace Sydes\Database\Entity;
 
+use Sydes\Database\Entity\Relations\Relation;
+
 class Model
 {
     use Concerns\HasTableInfo,
         Concerns\HasFields,
-        Concerns\HasAttributes;
+        Concerns\HasAttributes,
+        Concerns\HasRelationships;
 
     /**
      * The number of models to return for pagination.
@@ -28,11 +31,11 @@ class Model
     private $exists = false;
 
     /**
-     * Booted relationships
+     * Query builder for relations
      *
-     * @var array
+     * @var Builder
      */
-    protected $relations = [];
+    protected static $query;
 
     public function __construct(array $attrs = [])
     {
@@ -153,90 +156,53 @@ class Model
     }
 
     /**
-     * Get all the booted relations for the instance.
-     *
-     * @return array
-     */
-    public function getRelations()
-    {
-        return $this->relations;
-    }
-
-    /**
-     * Get a specified relationship.
-     *
-     * @param  string  $relation
-     * @return mixed
-     */
-    public function getRelation($relation)
-    {
-        return $this->relations[$relation];
-    }
-
-    /**
-     * Determine if the given relation is booted.
-     *
-     * @param  string  $key
-     * @return bool
-     */
-    public function relationBooted($key)
-    {
-        return array_key_exists($key, $this->relations);
-    }
-
-    /**
      * Set the specific relationship in the model.
      *
-     * @param  string  $relation
-     * @param  mixed  $value
+     * @param string $name
+     * @param mixed  $value
      * @return $this
      */
-    public function setRelationResult($relation, $value)
+    public function setRelationResult($name, $value)
     {
-        $this->field($relation)->set($value);
+        $this->field($name)->set($value);
 
         return $this;
     }
 
     /**
-     * Set the relationship in field.
-     *
-     * @param  string  $relation
-     * @param  mixed  $value
-     * @return $this
+     * @param Model  $model
+     * @param string $name
+     * @return Relation
      */
-    public function setRelation($relation, $value)
+    protected function createRelation(Model $related, $name, $settings)
     {
-        $this->field($relation)->setRelation($value);
+        $relation = camel_case($settings['relation']);
 
-        return $this;
+        switch ($relation) {
+            case 'hasOne':
+            case 'hasMany':
+                return $this->{$relation}(
+                    $this->newQueryFor($related), $settings['on_key'], $this->getKeyName(), $this->getkey()
+                );
+            case 'belongsTo':
+                return $this->belongsTo(
+                    $this->newQueryFor($related), $name, $settings['on_key'], $this->getAttribute($name)
+                );
+            default:
+                $pivot = $this->joiningTable($this->getTableSingular(), $related->getTableSingular());
+
+                return $this->belongsToMany($this->newQueryFor($related), $this)
+                    ->orderBy($pivot.'.position', 'asc');
+        }
     }
 
     /**
-     * Set the specific relationship in the model.
-     *
-     * @param  string  $relation
-     * @param  mixed  $value
-     * @return $this
+     * @param Model $model
+     * @return Builder
      */
-    public function bootRelation($relation, $value)
+    public function newQueryFor(Model $model)
     {
-        $this->relations[$relation] = $value;
-
-        return $this;
-    }
-
-    /**
-     * Set the entire relations array on the model.
-     *
-     * @param  array  $relations
-     * @return $this
-     */
-    public function setRelations(array $relations)
-    {
-        $this->relations = $relations;
-
-        return $this;
+        return self::$query->newQuery()->setModel($model);
     }
 
     /**
@@ -284,6 +250,14 @@ class Model
             'table' => $this->getTable(),
             'fields' => $this->getFieldList(),
         ];
+    }
+
+    /**
+     * @param Builder $query
+     */
+    public static function setQuery(Builder $query)
+    {
+        self::$query = $query;
     }
 
     /**

@@ -26,8 +26,7 @@ use Sydes\Support\Str;
  */
 class Builder
 {
-    use BuildsQueries,
-        Concerns\HasRelationships;
+    use BuildsQueries;
 
     /** @var QueryBuilder */
     protected $query;
@@ -189,10 +188,6 @@ class Builder
             $models = $this->loadTranslated($models);
         }
 
-        foreach ($this->model->getRelationalFields() as $field) {
-            $models = $this->bootRelations($models, $field);
-        }
-
         foreach ($this->eagerLoad as $name => $constraints) {
             if (strpos($name, '.') === false) {
                 $models = $this->eagerLoadRelation($models, $name, $constraints);
@@ -236,56 +231,6 @@ class Builder
         }
 
         return $models;
-    }
-
-    /**
-     * @param Model[] $models
-     * @param string  $name
-     * @return Model[]
-     */
-    public function bootRelations($models, $name)
-    {
-        foreach ($models as $model) {
-            $field = $model->bootField($name);
-            $model->bootRelation(
-                $name, $this->createRelation($model, $field->getRelated(), $name, $field->settings())
-            );
-        }
-
-        return $models;
-    }
-
-    /**
-     * @param Model  $model
-     * @param string $name
-     * @return \Closure
-     */
-    protected function createRelation(Model $model, Model $related, $name, $settings)
-    {
-        $relation = camel_case($settings['relation']);
-
-        switch ($relation) {
-            case 'hasOne':
-            case 'hasMany':
-                return function() use ($relation, $related, $settings, $model) {
-                    return $this->{$relation}(
-                        $this->newQueryFor($related), $settings['on_key'], $model->getKeyName(), $model->getkey()
-                    );
-                };
-            case 'belongsTo':
-                return function() use ($related, $settings, $name, $model) {
-                    return $this->belongsTo(
-                        $this->newQueryFor($related), $name, $settings['on_key'], $model->getAttribute($name)
-                    );
-                };
-            default:
-                return function() use ($related, $model) {
-                    $pivot = $this->joiningTable($model->getTableSingular(), $related->getTableSingular());
-
-                    return $this->belongsToMany($this->newQueryFor($related), $model)
-                                ->orderBy($pivot.'.position', 'asc');
-                };
-        }
     }
 
     /**
@@ -507,12 +452,11 @@ class Builder
     }
 
     /**
-     * @param Model $model
-     * @return mixed
+     * @return static
      */
-    public function newQueryFor(Model $model)
+    public function newQuery()
     {
-        return (new static($this->query->newQuery()))->setModel($model)->setManager($this->em);
+        return new static($this->query->newQuery());
     }
 
     /**

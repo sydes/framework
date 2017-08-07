@@ -133,20 +133,13 @@ trait HasFields
         }
 
         $class = self::$fieldTypes[$field['type']];
+        /** @var Field $field */
+        $field = new $class($name, $this->getAttribute($name), $field['settings']);
 
-        $value = null;
         if ($this->isRelational($name)) {
-            if ($rel = $this->getRelationValue($name)) {
-                $value = $rel->getResults();
-            }
-        } else {
-            $value = $this->getAttribute($name);
-        }
-
-        $field = new $class($name, $value, $field['settings']);
-
-        if (isset($rel)) {
+            $rel = $this->createRelation($field->getRelated(), $name, $field->settings());
             $field->setRelation($rel);
+            $field->set($rel->getResults());
         }
 
         return $field;

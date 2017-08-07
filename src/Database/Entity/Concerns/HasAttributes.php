@@ -7,8 +7,6 @@
 
 namespace Sydes\Database\Entity\Concerns;
 
-use Sydes\Database\Entity\Relations\Relation;
-
 trait HasAttributes
 {
     /**
@@ -35,7 +33,7 @@ trait HasAttributes
             return $this->attributes[$key];
         }
 
-        return $this->getRelationValue($key);
+        return null;
     }
 
     /**
@@ -93,20 +91,5 @@ trait HasAttributes
         $this->changed = [];
 
         return $this;
-    }
-
-    /**
-     * Get a relationship.
-     *
-     * @param  string  $key
-     * @return Relation
-     */
-    public function getRelationValue($key)
-    {
-        if ($this->relationBooted($key)) {
-            return call_user_func($this->relations[$key]);
-        }
-
-        return null;
     }
 }

@@ -27,10 +27,10 @@ trait HasRelationships
      */
     public function hasOne(Builder $query, $foreignKey, $localKey, $value)
     {
-        $foreignKey = $foreignKey ?: $this->model->getForeignKey();
-        $localKey = $localKey ?: $this->model->getKeyName();
+        $foreignKey = $foreignKey ?: $this->getForeignKey();
+        $localKey = $localKey ?: $this->getKeyName();
 
-        return new HasOne($query, $this->model, $query->getModel()->getTable().'.'.$foreignKey, $localKey, $value);
+        return new HasOne($query, $this, $query->getModel()->getTable().'.'.$foreignKey, $localKey, $value);
     }
 
     /**
@@ -44,10 +44,10 @@ trait HasRelationships
      */
     public function hasMany(Builder $query, $foreignKey, $localKey, $value)
     {
-        $foreignKey = $foreignKey ?: $this->model->getForeignKey();
-        $localKey = $localKey ?: $this->model->getKeyName();
+        $foreignKey = $foreignKey ?: $this->getForeignKey();
+        $localKey = $localKey ?: $this->getKeyName();
 
-        return new HasMany($query, $this->model, $query->getModel()->getTable().'.'.$foreignKey, $localKey, $value);
+        return new HasMany($query, $this, $query->getModel()->getTable().'.'.$foreignKey, $localKey, $value);
     }
 
     /**
@@ -65,7 +65,7 @@ trait HasRelationships
         $foreignKey = $foreignKey ?: $related->getForeignKey();
         $ownerKey = $ownerKey ?: $related->getKeyName();
 
-        return new BelongsTo($query, $this->model, $foreignKey, $ownerKey, $value);
+        return new BelongsTo($query, $this, $foreignKey, $ownerKey, $value);
     }
 
     /**
