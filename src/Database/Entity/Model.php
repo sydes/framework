@@ -37,6 +37,11 @@ class Model
      */
     protected static $query;
 
+    /**
+     * @var array
+     */
+    protected static $locales = [];
+
     public function __construct(array $attrs = [])
     {
         $this->fill($attrs);
@@ -258,6 +263,22 @@ class Model
     public static function setQuery(Builder $query)
     {
         self::$query = $query;
+    }
+
+    /**
+     * @param array $locales
+     */
+    public static function setLocales(array $locales)
+    {
+        self::$locales = $locales;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getLocales()
+    {
+        return self::$locales;
     }
 
     /**

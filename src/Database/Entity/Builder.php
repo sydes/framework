@@ -32,8 +32,6 @@ class Builder
     protected $query;
     /** @var Model */
     protected $model;
-    /** @var string|array */
-    protected $locales;
 
     /**
      * The relationships that should be eager loaded.
@@ -55,17 +53,6 @@ class Builder
     public function __construct(QueryBuilder $query)
     {
         $this->query = $query;
-    }
-
-    /**
-     * @param string|array $locales
-     * @return $this
-     */
-    public function setLocales($locales)
-    {
-        $this->locales = $locales;
-
-        return $this;
     }
 
     /**
@@ -211,7 +198,7 @@ class Builder
         }
 
         $translated = $this->query->newQuery()->from($this->model->getTranslationTable())
-            ->whereIn($foreign, array_keys($match))->whereIn('locale', (array)$this->locales)->get();
+            ->whereIn($foreign, array_keys($match))->whereIn('locale', Model::getLocales())->get();
 
         if ($translated) {
             $values = [];

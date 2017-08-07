@@ -23,6 +23,7 @@ class DatabaseServicesProvider implements ServiceProviderInterface
 
             $con->getSchemaBuilder()->enableForeignKeyConstraints();
 
+            Model::setLocales($c->get('site')->get('locales'));
             Model::setFieldTypes($c->get('entity.fieldTypes'));
             Model::setQuery(new Builder(new \Sydes\Database\Query\Builder($con)));
 
@@ -30,7 +31,7 @@ class DatabaseServicesProvider implements ServiceProviderInterface
         });
 
         $c->set(Manager::class, function ($c) {
-            return new Manager($c->get('site')->get('locales'), $c->get('db'));
+            return new Manager($c->get('db'));
         });
     }
 }

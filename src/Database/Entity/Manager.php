@@ -13,11 +13,9 @@ use Sydes\Database\Query\Builder;
 class Manager
 {
     protected $conn;
-    protected $locales;
 
-    public function __construct($locales, Connection $conn)
+    public function __construct(Connection $conn)
     {
-        $this->locales = $locales;
         $this->conn = $conn;
     }
 
@@ -36,7 +34,6 @@ class Manager
     public function getRepository($model)
     {
         $repo = new Repository($this);
-        $repo->setLocales($this->locales);
 
         return is_string($model) ? $repo->forEntity($model) : $repo->setModel($model);
     }

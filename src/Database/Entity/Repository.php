@@ -19,11 +19,6 @@ class Repository
      */
     protected $em;
 
-    /**
-     * @var string|array
-     */
-    protected $locales;
-
     public function __construct(Manager $em)
     {
         $this->em = $em;
@@ -31,19 +26,6 @@ class Repository
         if ($this->entity) {
             $this->forEntity($this->entity);
         }
-    }
-
-	/**
-     * Set locales for translation loading
-     *
-     * @param string|array $locales
-     * @return $this
-     */
-    public function setLocales($locales)
-    {
-        $this->locales = $locales;
-
-        return $this;
     }
 
     /**
@@ -286,7 +268,7 @@ class Repository
 
         $builder = new Builder(new QueryBuilder($this->em->getConnection()));
 
-        return $builder->setLocales($this->locales)->setModel($this->model);
+        return $builder->setModel($this->model);
     }
 
     /**
