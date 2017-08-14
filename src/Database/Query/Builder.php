@@ -687,6 +687,19 @@ class Builder
     }
 
     /**
+     * Add a "where like" clause to the query with support of utf-8 characters
+     *
+     * @param string $column
+     * @param string $value
+     * @param string $boolean
+     * @return $this
+     */
+    public function whereLike($column, $value, $boolean = 'and')
+    {
+        return $this->whereRaw('tolower('.$column.') LIKE (?)', [tolower($value)], $boolean);
+    }
+
+    /**
      * Add a raw where clause to the query.
      *
      * @param string $sql

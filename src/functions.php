@@ -521,7 +521,7 @@ function sortByWeight($a, $b)
     return isset($a['weight'], $b['weight']) ? $a['weight'] - $b['weight'] : 0;
 }
 
-function lower($string)
+function tolower($string)
 {
     return mb_strtolower($string, 'UTF-8');
 }

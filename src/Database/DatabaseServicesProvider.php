@@ -22,6 +22,7 @@ class DatabaseServicesProvider implements ServiceProviderInterface
             $con = new \Sydes\Database\SQLiteConnection($pdo, $path);
 
             $con->getSchemaBuilder()->enableForeignKeyConstraints();
+            $con->getPdo()->sqliteCreateFunction('tolower', 'tolower', 1);
 
             Model::setLocales($c->get('site')->get('locales'));
             Model::setFieldTypes($c->get('entity.fieldTypes'));
