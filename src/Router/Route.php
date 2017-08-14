@@ -36,4 +36,13 @@ class Route extends \FastRoute\RouteCollector
         $this->get('/admin/'.$alias.'/settings', $module.'@settings');
         $this->put('/admin/'.$alias.'/settings', $module.'@updateSettings');
     }
+
+    /**
+     * @param string $alias
+     * @param string $module
+     */
+    public function autoComplete($alias, $module)
+    {
+        $this->get('/admin/'.$alias.'/suggest/{target}/{title}', $module.'@autoComplete');
+    }
 }

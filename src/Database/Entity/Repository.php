@@ -270,6 +270,28 @@ class Repository
     }
 
     /**
+     * Find elements for autocomplete
+     *
+     * @param string $title
+     * @param string $term
+     * @return array
+     */
+    public function suggest($title, $term)
+    {
+        $results = $this->newQuery()->whereLike($title, '%'.$term.'%')->get();
+        $ret = [];
+
+        foreach ($results->all() as $item) {
+            $ret[] = [
+                'value' => $item->getKey(),
+                'label' => $item->getAttribute($title),
+            ];
+        }
+
+        return $ret;
+    }
+
+    /**
      * Get a new query builder for the model's table.
      *
      * @return Builder
