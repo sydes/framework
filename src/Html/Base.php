@@ -310,7 +310,7 @@ class Base
     public static function select($name, $value, array $items, array $attr = [])
     {
         if (empty($items)) {
-            $items[''] = ' -- ';
+            $items[''] = '--';
         }
 
         $attr['name'] = $name.(isset($attr['multiple']) ? '[]' : '');
