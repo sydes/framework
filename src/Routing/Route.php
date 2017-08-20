@@ -4,7 +4,7 @@
  * @copyright 2011-2017, ArtyGrand <artygrand.ru>
  * @license   MIT license; see LICENSE
  */
-namespace Sydes\Router;
+namespace Sydes\Routing;
 
 class Route extends \FastRoute\RouteCollector
 {
@@ -44,5 +44,23 @@ class Route extends \FastRoute\RouteCollector
     public function autoComplete($alias, $module)
     {
         $this->get('/admin/'.$alias.'/suggest/{target}/{title}', $module.'@autoComplete');
+    }
+
+    /**
+     * @param string $alias
+     * @param string $module
+     */
+    public function view($alias, $view)
+    {
+        $this->get($alias, 'Main@view?view='.$view);
+    }
+
+    /**
+     * @param string $alias
+     * @param string $module
+     */
+    public function redirect($from, $to)
+    {
+        $this->get($from, 'Main@redirect?to='.$to);
     }
 }
