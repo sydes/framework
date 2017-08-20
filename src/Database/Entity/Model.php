@@ -307,7 +307,7 @@ class Model
      */
     public function __isset($key)
     {
-        return $this->hasField($key);
+        return isset($this->attributes[$key]);
     }
 
     /**
