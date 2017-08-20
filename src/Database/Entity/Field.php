@@ -19,9 +19,6 @@ abstract class Field
     protected $formatters = [
         'default' => 'default_formatter',
     ];
-    protected $searchable = false;
-    protected $filterable = true;
-    protected $sortable = true;
 
     /**
      * Field constructor with data and settings
@@ -34,12 +31,17 @@ abstract class Field
     {
         $this->name = $name;
         $this->settings = array_merge([
+            'editable' => true,
             'required' => false,
+            'default' => null,
             'helpText' => '',
             'multiple' => false,
-            'default' => null,
             'label' => '',
             'formatter' => 'default',
+            'searchable' => false,
+            'filterable' => false,
+            'sortable' => false,
+            'validators' => '',
         ], $this->settings, $settings);
         $this->fromString($value);
     }
@@ -276,29 +278,5 @@ abstract class Field
         $events->on('create', function (Blueprint $t, Connection $db) {
             $t->string($this->name);
         });
-    }
-
-    /**
-     * @return bool
-     */
-    public function isSearchable()
-    {
-        return $this->searchable;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isFilterable()
-    {
-        return $this->filterable;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isSortable()
-    {
-        return $this->sortable;
     }
 }
