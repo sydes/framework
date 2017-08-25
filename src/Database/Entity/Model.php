@@ -225,40 +225,6 @@ class Model
     }
 
     /**
-     * Create entity with structure from array
-     *
-     * @param array $state
-     * @return static
-     */
-    public static function unserialize(array $state)
-    {
-        $m = new static;
-
-        if (isset($state['table'])) {
-            $m->setTable($state['table']);
-        }
-
-        if (isset($state['fields'])) {
-            $m->setFields($state['fields']);
-        }
-
-        return $m;
-    }
-
-    /**
-     * Convert entity structure to array
-     *
-     * @return array
-     */
-    public function serialize()
-    {
-        return [
-            'table' => $this->getTable(),
-            'fields' => $this->getFieldList(),
-        ];
-    }
-
-    /**
      * @param Builder $query
      */
     public static function setQuery(Builder $query)

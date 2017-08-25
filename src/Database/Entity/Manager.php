@@ -75,8 +75,8 @@ class Manager
     /**
      * Perform a model update operation.
      *
-     * @param QB $query
-     * @param Model   $model
+     * @param QB    $query
+     * @param Model $model
      * @return bool
      */
     protected function update(QB $query, Model $model)
@@ -102,8 +102,8 @@ class Manager
     /**
      * Perform a model insert operation.
      *
-     * @param QB $query
-     * @param Model   $model
+     * @param QB    $query
+     * @param Model $model
      * @return bool
      */
     protected function insert(QB $query, Model $model)
@@ -207,5 +207,60 @@ class Manager
     protected function fire(Model $model, $event, $halt = false)
     {
         return $model->fillEvents(new Event)->fire($event, $this->conn, $halt);
+    }
+
+    /**
+     * Create entity with structure and data
+     *
+     * @param array|string $entity class name or array with structure
+     * @param array        $values for filling
+     * @return null|Model
+     */
+    public function make($entity, $values = [])
+    {
+        if (is_string($entity)) {
+            return new $entity($values);
+        } elseif (is_array($entity)) {
+            $m = new Model;
+
+            if (isset($entity['table'])) {
+                $m->setTable($entity['table']);
+            }
+
+            if (isset($entity['fields'])) {
+                $m->setFields($entity['fields']);
+            }
+
+            if (isset($entity['panels'])) {
+                $m->setPanels($entity['panels']);
+            }
+
+            if (!empty($values)) {
+                $m->fill($values);
+            }
+
+            return $m;
+        }
+
+        throw new \InvalidArgumentException('First argument should be string or array');
+    }
+
+    public function getStructure(Model $model)
+    {
+        $ret = [];
+
+        $table = $model->getTable();
+        if ($table != 'models') {
+            $ret['table'] = $table;
+        }
+
+        $ret['fields'] = $model->getFieldList();
+
+        $panels = $model->getPanelList();
+        if ($panels) {
+            $ret['panels'] = $panels;
+        }
+
+        return $ret;
     }
 }
