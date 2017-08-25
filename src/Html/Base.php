@@ -105,6 +105,8 @@ class Base
                     if (is_array($v)) {
                         $str .= " $key-$k=\"".json_encode($v,
                                 JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT | JSON_HEX_TAG).'"';
+                    } elseif ($v === true) {
+                        $str .= " $key-$k";
                     } else {
                         $str .= " $key-$k=\"".static::encode($v).'"';
                     }
@@ -168,12 +170,14 @@ class Base
 
     /**
      * @param string $name
-     * @param string $content
+     * @param string|array $content
      * @param array  $attr
      * @return string
      */
     public static function tag($name, $content = '', $attr = [])
     {
+        $content = is_array($content) ? implode('', $content) : $content;
+
         if (!$name) {
             return $content;
         }
@@ -301,30 +305,114 @@ class Base
     }
 
     /**
-     * @param string $name
-     * @param string $value
-     * @param array  $items List of items 'value' => 'title'
-     * @param array  $attr
+     * @param string       $name
+     * @param string|array $value
+     * @param array        $items List of items 'value' => 'title'
+     * @param array        $attr
+     * @param array        $optionAttr
      * @return string
      */
-    public static function select($name, $value, array $items, array $attr = [])
+    public static function select($name, $value, array $items, array $attr = [], array $optionAttr = [])
     {
-        if (empty($items)) {
+        $attr['name'] = isset($attr['multiple']) ? $name.'[]' : $name;
+        $html = [];
+
+        if (isset($attr['placeholder'])) {
+            $html[] = static::placeholderOption($attr['placeholder'], $value);
+            unset($attr['placeholder']);
+        } elseif (empty($items)) {
             $items[''] = '--';
         }
 
-        $attr['name'] = $name.(isset($attr['multiple']) ? '[]' : '');
-
-        $html = '';
-        foreach ($items as $val => $title) {
-            $opt = [
-                'selected' => "$val" === "$value",
-                'value' => $val,
-            ];
-            $html .= static::tag('option', $title, $opt);
+        foreach ($items as $val => $display) {
+            $opt = isset($optionAttr[$val]) ? $optionAttr[$val] : [];
+            $html[] = static::getSelectOption($display, $val, $value, $opt);
         }
 
-        return static::tag('select', $html, $attr);
+        return static::tag('select', implode('', $html), $attr);
+    }
+
+    /**
+     * Get the select option for the given value.
+     *
+     * @param  string       $display
+     * @param  string       $value
+     * @param  string|array $selected
+     * @param  array        $attr
+     * @return string
+     */
+    public static function getSelectOption($display, $value, $selected, array $attr = [])
+    {
+        if (is_array($display)) {
+            return static::optionGroup($display, $value, $selected, $attr);
+        }
+
+        return static::option($display, $value, $selected, $attr);
+    }
+
+    /**
+     * Create an option group form element.
+     *
+     * @param  array        $list
+     * @param  string       $label
+     * @param  string|array $selected
+     * @param  array        $attr
+     * @return string
+     */
+    protected static function optionGroup($list, $label, $selected, array $attr = [])
+    {
+        $html = [];
+        foreach ($list as $value => $display) {
+            $html[] = static::option($display, $value, $selected, $attr);
+        }
+
+        return static::tag('optgroup', implode('', $html), ['label' => $label]);
+    }
+
+    /**
+     * Create a select element option.
+     *
+     * @param  string       $display
+     * @param  string       $value
+     * @param  string|array $selected
+     * @param  array        $attr
+     * @return string
+     */
+    protected static function option($display, $value, $selected, array $attr = [])
+    {
+        $selected = static::getSelectedValue($value, $selected);
+
+        return static::tag('option', $display, ['value' => $value, 'selected' => $selected] + $attr);
+    }
+
+    /**
+     * Create a placeholder select element option.
+     *
+     * @param string       $display
+     * @param string|array $selected
+     * @return string
+     */
+    protected static function placeholderOption($display, $selected)
+    {
+        $selected = static::getSelectedValue(null, $selected);
+
+        return static::tag('option', $display, ['value' => '', 'selected' => $selected]);
+    }
+
+    /**
+     * Determine if the value is selected.
+     *
+     * @param string       $value
+     * @param string|array $selected
+     * @return bool
+     */
+    protected static function getSelectedValue($value, $selected)
+    {
+        if (is_array($selected)) {
+            return in_array($value, $selected, true) || in_array((string)$value, $selected, true);
+        }
+
+        return (string)$value == (string)$selected;
     }
 
     /**
@@ -626,7 +714,7 @@ class Base
      */
     public static function treeList(array $items, callable $formatter, array $attr = [], $max_level = 20)
     {
-        $cur = current($items);
+        $cur = reset($items);
         $prev_level = $cur['level'];
         $html = '<ul'.static::attr($attr).'>';
 
@@ -637,7 +725,7 @@ class Base
 
             if ($prev_level < $item['level']) {
                 $html .= '<ul>';
-            } else {
+            } elseif ($prev_level > $item['level']) {
                 $html .= str_repeat('</li></ul>', $prev_level - $item['level']);
                 $html .= '</li>';
             }
