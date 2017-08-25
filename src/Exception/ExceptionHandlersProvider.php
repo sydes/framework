@@ -18,6 +18,10 @@ class ExceptionHandlersProvider implements ServiceProviderInterface
         }));
 
         $c->set('AppExceptionHandler', \DI\value(function (AppException $e) use ($c) {
+            if (!$c->has('site.id')) {
+                return html($e->getMessage(), $e->getCode());
+            }
+
             $doc = document();
             if ($c->get('section') == 'front') {
                 if (model('Themes')->getActive()->getLayouts()->exists('error'.$e->getCode())) {
