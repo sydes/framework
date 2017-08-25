@@ -147,6 +147,7 @@ trait HasFields
 
     /**
      * @param string $field
+     * @return bool
      */
     public function isRelational($field)
     {
