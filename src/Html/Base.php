@@ -705,8 +705,10 @@ class Base
      * Gets tree from flat array
      *
      * @param array    $items     Flat array with elements.
-     *                            Each element must have at least 'level'.
-     *                            Each element can have 'attr' for LI and other data
+     *                            Each element must have key 'level' - int, > 0.
+     *                            Optional: 'attr' - array of attributes for <li>;
+     *                                      'skip' - bool, don't show in list;
+     *
      * @param int      $max_level Maximum tree depth
      * @param array    $attr      Attributes for UL
      * @param callable $formatter A callback that can return a string with html
@@ -714,9 +716,8 @@ class Base
      */
     public static function treeList(array $items, callable $formatter, array $attr = [], $max_level = 20)
     {
-        $cur = reset($items);
-        $prev_level = $cur['level'];
-        $html = '<ul'.static::attr($attr).'>';
+        $prev_level = 0;
+        $html = '';
 
         foreach ($items as $item) {
             if (isset($item['skip']) || $max_level < $item['level']) {
@@ -724,9 +725,10 @@ class Base
             }
 
             if ($prev_level < $item['level']) {
-                $html .= '<ul>';
+                $html .= $item['level'] == 1 ? '<ul'.static::attr($attr).'>' : '<ul>';
             } elseif ($prev_level > $item['level']) {
-                $html .= str_repeat('</li></ul>', $prev_level - $item['level']);
+                $html .= str_repeat('</li></ul>', $prev_level - $item['level']).'</li>';
+            } else {
                 $html .= '</li>';
             }
 
