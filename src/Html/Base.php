@@ -472,6 +472,8 @@ class Base
      */
     public static function fileInput($name, array $attr = [])
     {
+        $name = isset($attr['multiple']) ? $name.'[]' : $name;
+
         return static::input('file', $name, '', $attr);
     }
 
