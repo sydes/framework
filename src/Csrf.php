@@ -62,7 +62,7 @@ class Csrf
 
     public function appendHeader(ResponseInterface &$response)
     {
-        if (!in_array($this->request->getMethod(), ['POST', 'PUT', 'DELETE', 'PATCH']) || !$this->request->isAjax()) {
+        if (!in_array($this->request->getMethod(), ['POST', 'PUT', 'DELETE', 'PATCH']) || !$this->request->ajax()) {
             return;
         }
 

@@ -7,27 +7,17 @@
 
 namespace Sydes\Services;
 
-use Zend\Diactoros\ServerRequestFactory;
+use Psr\Http\Message\RequestInterface;
+use Sydes\Contracts\Http\Request;
 
 class DefaultServicesProvider implements ServiceProviderInterface
 {
     public function register(\DI\Container $c)
     {
         $c->set('Sydes\Http\Request', function () {
-            $r = ServerRequestFactory::fromGlobals();
-
-            return new \Sydes\Http\Request(
-                $r->getServerParams(),
-                $r->getUploadedFiles(),
-                $r->getUri(),
-                $r->getMethod(),
-                $r->getBody(),
-                $r->getHeaders(),
-                $r->getCookieParams(),
-                $r->getQueryParams(),
-                $r->getParsedBody(),
-                $r->getProtocolVersion()
-            );
+            return \Sydes\Http\Request::capture();
         });
+        $c->set(Request::class, \DI\get('Sydes\Http\Request'));
+        $c->set(RequestInterface::class, \DI\get('Sydes\Http\Request'));
     }
 }

@@ -4,82 +4,47 @@
  * @copyright 2011-2017, ArtyGrand <artygrand.ru>
  * @license   MIT license; see LICENSE
  */
+
 namespace Sydes\Http;
 
+use Sydes\Contracts\Http\Request as RequestContract;
+use Sydes\Support\Str;
 use Zend\Diactoros\ServerRequest;
+use Zend\Diactoros\ServerRequestFactory;
 
-class Request extends ServerRequest
+class Request extends ServerRequest implements RequestContract
 {
-    /**
-     * @return bool
-     */
-    public function isGet()
-    {
-        return $this->getMethod() == 'GET';
-    }
+    use Concerns\InteractsWithContentTypes,
+        Concerns\InteractsWithInput;
 
     /**
-     * @return bool
+     * The decoded JSON content for the request.
+     *
+     * @var string
      */
-    public function isPost()
-    {
-        return $this->getMethod() == 'POST';
-    }
+    protected $json;
 
     /**
-     * @return bool
+     * Create an request from a Diactoros instance.
+     *
+     * @return static
      */
-    public function isPut()
+    public static function capture()
     {
-        return $this->getMethod() == 'PUT';
-    }
+        $r = ServerRequestFactory::fromGlobals();
 
-    /**
-     * @return bool
-     */
-    public function isPatch()
-    {
-        return $this->getMethod() == 'PATCH';
-    }
-
-    /**
-     * @return bool
-     */
-    public function isDelete()
-    {
-        return $this->getMethod() == 'DELETE';
-    }
-
-    /**
-     * @return bool
-     */
-    public function isHead()
-    {
-        return $this->getMethod() == 'HEAD';
-    }
-
-    /**
-     * @return bool
-     */
-    public function isOptions()
-    {
-        return $this->getMethod() == 'OPTIONS';
-    }
-
-    /**
-     * @return bool
-     */
-    public function isAjax()
-    {
-        return $this->getHeaderLine('X-Requested-With') == 'XMLHttpRequest';
-    }
-
-    /**
-     * @return bool
-     */
-    public function isSecure()
-    {
-        return $this->getUri()->getScheme() == 'https';
+        return new static(
+            $r->getServerParams(),
+            $r->getUploadedFiles(),
+            $r->getUri(),
+            $r->getMethod(),
+            $r->getBody(),
+            $r->getHeaders(),
+            $r->getCookieParams(),
+            $r->getQueryParams(),
+            $r->getParsedBody(),
+            $r->getProtocolVersion()
+        );
     }
 
     /**
@@ -89,14 +54,17 @@ class Request extends ServerRequest
      *
      * @return string The request method
      */
-    public function getMethod()
+    public function method()
     {
         $method = parent::getMethod();
+
         if ($method == 'POST') {
-            $method = strtoupper($this->input('_method', 'POST'));
+            if (!$method = $this->header('X-HTTP-METHOD-OVERRIDE')) {
+                $method = $this->input('_method', 'POST');
+            }
         }
 
-        return $method;
+        return strtoupper($method);
     }
 
     /**
@@ -110,127 +78,148 @@ class Request extends ServerRequest
     }
 
     /**
-     * Determine if the request contains a non-empty value for an input item.
-     *
-     * @param string|array $key
+     * @param string $method
      * @return bool
      */
-    public function has($key)
+    public function isMethod($method)
     {
-        $keys = is_array($key) ? $key : func_get_args();
+        return $this->method() == strtoupper($method);
+    }
 
-        foreach ($keys as $value) {
-            if ($this->isEmptyString($value)) {
-                return false;
+    /**
+     * Get the URL (no query string) for the request.
+     *
+     * @return string
+     */
+    public function url()
+    {
+        return (string) $this->getUri()->withQuery('')->withFragment('');
+    }
+
+    /**
+     * Get the full URL for the request.
+     *
+     * @return string
+     */
+    public function fullUrl()
+    {
+        return (string) $this->getUri();
+    }
+
+    /**
+     * Get the full URL for the request with the added query string parameters.
+     *
+     * @param  array  $query
+     * @return string
+     */
+    public function fullUrlWithQuery(array $query)
+    {
+        return (string) $this->getUri()->withQuery(
+            http_build_query(array_merge($this->getQueryParams(), $query))
+        );
+    }
+
+    /**
+     * Get the current path info for the request.
+     *
+     * @return string
+     */
+    public function path()
+    {
+        $pattern = trim($this->getUri()->getPath(), '/');
+
+        return $pattern == '' ? '/' : $pattern;
+    }
+
+    /**
+     * Get the current decoded path info for the request.
+     *
+     * @return string
+     */
+    public function decodedPath()
+    {
+        return rawurldecode($this->path());
+    }
+
+    /**
+     * Determine if the current request URI matches a pattern.
+     *
+     * @param array $patterns
+     * @return bool
+     */
+    public function is(...$patterns)
+    {
+        foreach ($patterns as $pattern) {
+            if (Str::is($pattern, $this->decodedPath())) {
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 
     /**
-     * Determine if the given input key is an empty string for "has".
+     * Determine if the request is the result of an AJAX call.
      *
-     * @param string $key
      * @return bool
      */
-    protected function isEmptyString($key)
+    public function ajax()
     {
-        $value = $this->input($key);
-        $boolOrArray = is_bool($value) || is_array($value);
-
-        return !$boolOrArray && trim((string)$value) === '';
+        return $this->getHeaderLine('X-Requested-With') == 'XMLHttpRequest';
     }
 
     /**
-     * Gets a "parameter" value from request.
+     * Determine if the request is the result of an PJAX call.
      *
-     * @param string $key     the key
-     * @param mixed  $default the default value
-     * @return mixed
+     * @return bool
      */
-    public function input($key, $default = null)
+    public function pjax()
     {
-        $postParams = $this->getParsedBody();
-        $getParams = $this->getQueryParams();
-        $result = $default;
-        if (isset($postParams[$key])) {
-            $result = $postParams[$key];
-        } elseif (isset($getParams[$key])) {
-            $result = $getParams[$key];
-        }
-
-        return $result;
+        return $this->getHeaderLine('X-PJAX') == 'true';
     }
 
     /**
-     * Gets a required "parameter" value from request or throws Exception.
-     *
-     * @param string $key the key
-     * @return mixed
-     * @throws \RuntimeException
+     * @return bool
      */
-    public function getRequired($key)
+    public function secure()
     {
-        $value = $this->input($key);
-        if (is_null($value) || ($value === '')) {
-            throw new \RuntimeException(t('error_parameter_required', ['key' => $key]));
-        }
+        $https = $this->server('HTTPS');
 
-        return $value;
-    }
-
-    /**
-     * Get a subset of the items from the input data.
-     *
-     * @param array|mixed $keys
-     * @return array
-     */
-    public function only($keys)
-    {
-        $keys = is_array($keys) ? $keys : func_get_args();
-        $results = [];
-        $input = $this->all();
-        foreach ($keys as $key) {
-            $results[$key] = isset($input[$key]) ? $input[$key] : null;
-        }
-
-        return $results;
-    }
-
-    /**
-     * Get all of the input for the request.
-     *
-     * @return array
-     */
-    public function all()
-    {
-        return $this->getRealMethod() == 'GET' ? $this->getQueryParams() : $this->getParsedBody();
+        return !empty($https) && 'off' !== strtolower($https);
     }
 
     public function getIp()
     {
-        $server = $this->getServerParams();
-
-        return $server['REMOTE_ADDR'];
+        return $this->server('REMOTE_ADDR');
     }
 
     /**
-     * @param string $name    the cookie name
-     * @param string $default the default value
-     * @return string
+     * Get the JSON payload for the request.
+     *
+     * @param  string  $key
+     * @param  mixed   $default
+     * @return mixed
      */
-    public function cookie($name, $default = null)
+    public function json($key = null, $default = null)
     {
-        $coolies = $this->getCookieParams();
+        if (!isset($this->json)) {
+            $this->json = json_decode($this->getBody(), true);
+        }
 
-        return isset($coolies[$name]) ? $coolies[$name] : $default;
+        return data_get($this->json, $key, $default);
     }
 
-    public function file($name, $default = null)
+    /**
+     * Get the input source for the request.
+     *
+     * @return array
+     */
+    protected function getInputSource()
     {
-        $files = $this->getUploadedFiles();
+        if ($this->isJson()) {
+            return $this->json();
+        }
 
-        return isset($files[$name]) ? $files[$name] : $default;
+        return $this->getRealMethod() == 'GET' ? $this->getQueryParams() : $this->post();
     }
 }
