@@ -307,7 +307,7 @@ class BS4 extends Base
             '.$d['title'].'
         </div>
         <div id="acc'.$count.'-'.$key.'" class="collapse'.$active.'">
-            <div class="card-block">'.$d['content'].'</div>
+            <div class="card-body">'.$d['content'].'</div>
         </div>
     </div>';
         }
