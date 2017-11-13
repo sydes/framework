@@ -4,6 +4,7 @@
  * @copyright 2011-2017, ArtyGrand <artygrand.ru>
  * @license   MIT license; see LICENSE
  */
+
 namespace Sydes\L10n;
 
 class Translator
@@ -47,7 +48,7 @@ class Translator
         }
 
         if (!isset($this->classes[$locale])) {
-            $class = 'Locales\\'.ucfirst($locale);
+            $class = 'Sydes\L10n\Locales\\'.ucfirst($locale);
             $this->classes[$locale] = new $class;
         }
 

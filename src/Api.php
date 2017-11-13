@@ -22,16 +22,6 @@ class Api
         return $this->get('update/check/'.$this->version);
     }
 
-    public function getLocales()
-    {
-        return $this->json('locales');
-    }
-
-    public function loadLocale($locale)
-    {
-        return $this->get('locale/'.rawurlencode($locale));
-    }
-
     public function getTranslations($module)
     {
         return $this->json('translations/'.rawurlencode($module));

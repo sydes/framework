@@ -4,6 +4,7 @@
  * @copyright 2011-2017, ArtyGrand <artygrand.ru>
  * @license   MIT license; see LICENSE
  */
+
 namespace Sydes\L10n;
 
 class Locale
