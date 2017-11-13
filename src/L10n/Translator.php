@@ -48,7 +48,7 @@ class Translator
         }
 
         if (!isset($this->classes[$locale])) {
-            $class = 'Sydes\L10n\Locales\\'.ucfirst($locale);
+            $class = 'Sydes\L10n\Locales\\'.ucfirst($locale).'Locale';
             $this->classes[$locale] = new $class;
         }
 
