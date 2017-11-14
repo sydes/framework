@@ -4,8 +4,8 @@ namespace Sydes\Database\Schema;
 
 use Closure;
 use Sydes\Database\Connection;
-use Sydes\Support\Fluent;
 use Sydes\Database\Schema\Grammars\Grammar;
+use Sydes\Support\Fluent;
 
 class Blueprint
 {
@@ -72,8 +72,8 @@ class Blueprint
     /**
      * Execute the blueprint against the database.
      *
-     * @param Connection              $connection
-     * @param \Sydes\Database\Schema\Grammars\Grammar $grammar
+     * @param Connection $connection
+     * @param Grammar    $grammar
      */
     public function build(Connection $connection, Grammar $grammar)
     {
@@ -85,13 +85,13 @@ class Blueprint
     /**
      * Get the raw SQL statements for the blueprint.
      *
-     * @param Connection              $connection
-     * @param \Sydes\Database\Schema\Grammars\Grammar $grammar
+     * @param Connection $connection
+     * @param Grammar    $grammar
      * @return array
      */
     public function toSql(Connection $connection, Grammar $grammar)
     {
-        $this->addImpliedCommands();
+        $this->addImpliedCommands($grammar);
 
         $statements = [];
 
@@ -113,8 +113,10 @@ class Blueprint
 
     /**
      * Add the commands that are implied by the blueprint's state.
+     *
+     * @param Grammar $grammar
      */
-    protected function addImpliedCommands()
+    protected function addImpliedCommands(Grammar $grammar)
     {
         if (count($this->getAddedColumns()) > 0 && !$this->creating()) {
             array_unshift($this->commands, $this->createCommand('add'));
@@ -125,6 +127,8 @@ class Blueprint
         }
 
         $this->addFluentIndexes();
+
+        $this->addFluentCommands($grammar);
     }
 
     /**
@@ -133,7 +137,7 @@ class Blueprint
     protected function addFluentIndexes()
     {
         foreach ($this->columns as $column) {
-            foreach (['primary', 'unique', 'index'] as $index) {
+            foreach (['primary', 'unique', 'index', 'spatialIndex'] as $index) {
                 // If the index has been specified on the given column, but is simply equal
                 // to "true" (boolean), no name has been specified for this index so the
                 // index method can be called without a name and it will generate one.
@@ -151,6 +155,31 @@ class Blueprint
 
                     continue 2;
                 }
+            }
+        }
+    }
+
+    /**
+     * Add the fluent commands specified on any columns.
+     *
+     * @param Grammar $grammar
+     * @param
+     */
+    public function addFluentCommands(Grammar $grammar)
+    {
+        foreach ($this->columns as $column) {
+            foreach ($grammar->getFluentCommands() as $commandName) {
+                $attributeName = lcfirst($commandName);
+
+                if (!isset($column->{$attributeName})) {
+                    continue;
+                }
+
+                $value = $column->{$attributeName};
+
+                $this->addCommand(
+                    $commandName, compact('value', 'column')
+                );
             }
         }
     }
@@ -213,7 +242,7 @@ class Blueprint
      */
     public function dropColumn($columns)
     {
-        $columns = is_array($columns) ? $columns : (array)func_get_args();
+        $columns = is_array($columns) ? $columns : func_get_args();
 
         return $this->addCommand('dropColumn', compact('columns'));
     }
@@ -261,6 +290,17 @@ class Blueprint
     public function dropIndex($index)
     {
         return $this->dropIndexCommand('dropIndex', 'index', $index);
+    }
+
+    /**
+     * Indicate that the given spatial index should be dropped.
+     *
+     * @param string|array $index
+     * @return Fluent
+     */
+    public function dropSpatialIndex($index)
+    {
+        return $this->dropIndexCommand('dropSpatialIndex', 'spatialIndex', $index);
     }
 
     /**
@@ -362,6 +402,18 @@ class Blueprint
     public function index($columns, $name = null, $algorithm = null)
     {
         return $this->indexCommand('index', $columns, $name, $algorithm);
+    }
+
+    /**
+     * Specify a spatial index for the table.
+     *
+     * @param string|array $columns
+     * @param string       $name
+     * @return Fluent
+     */
+    public function spatialIndex($columns, $name = null)
+    {
+        return $this->indexCommand('spatialIndex', $columns, $name);
     }
 
     /**
@@ -657,6 +709,23 @@ class Blueprint
     }
 
     /**
+     * Create a new unsigned decimal column on the table.
+     *
+     * @param string $column
+     * @param int    $total
+     * @param int    $places
+     * @return Fluent
+     */
+    public function unsignedDecimal($column, $total = 8, $places = 2)
+    {
+        return $this->addColumn('decimal', $column, [
+            'total'    => $total,
+            'places'   => $places,
+            'unsigned' => true,
+        ]);
+    }
+
+    /**
      * Create a new boolean column on the table.
      *
      * @param string $column
@@ -740,11 +809,12 @@ class Blueprint
      * Create a new time column on the table.
      *
      * @param string $column
+     * @param int    $precision
      * @return Fluent
      */
-    public function time($column)
+    public function time($column, $precision = 0)
     {
-        return $this->addColumn('time', $column);
+        return $this->addColumn('time', $column, compact('precision'));
     }
 
     /**
@@ -883,6 +953,94 @@ class Blueprint
     public function macAddress($column)
     {
         return $this->addColumn('macAddress', $column);
+    }
+
+    /**
+     * Create a new geometry column on the table.
+     *
+     * @param string $column
+     * @return Fluent
+     */
+    public function geometry($column)
+    {
+        return $this->addColumn('geometry', $column);
+    }
+
+    /**
+     * Create a new point column on the table.
+     *
+     * @param string $column
+     * @return Fluent
+     */
+    public function point($column)
+    {
+        return $this->addColumn('point', $column);
+    }
+
+    /**
+     * Create a new linestring column on the table.
+     *
+     * @param string $column
+     * @return Fluent
+     */
+    public function lineString($column)
+    {
+        return $this->addColumn('linestring', $column);
+    }
+
+    /**
+     * Create a new polygon column on the table.
+     *
+     * @param string $column
+     * @return Fluent
+     */
+    public function polygon($column)
+    {
+        return $this->addColumn('polygon', $column);
+    }
+
+    /**
+     * Create a new geometrycollection column on the table.
+     *
+     * @param string $column
+     * @return Fluent
+     */
+    public function geometryCollection($column)
+    {
+        return $this->addColumn('geometrycollection', $column);
+    }
+
+    /**
+     * Create a new multipoint column on the table.
+     *
+     * @param string $column
+     * @return Fluent
+     */
+    public function multiPoint($column)
+    {
+        return $this->addColumn('multipoint', $column);
+    }
+
+    /**
+     * Create a new multilinestring column on the table.
+     *
+     * @param string $column
+     * @return Fluent
+     */
+    public function multiLineString($column)
+    {
+        return $this->addColumn('multilinestring', $column);
+    }
+
+    /**
+     * Create a new multipolygon column on the table.
+     *
+     * @param string $column
+     * @return Fluent
+     */
+    public function multiPolygon($column)
+    {
+        return $this->addColumn('multipolygon', $column);
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace Sydes\Database;
 
+use Doctrine\DBAL\Driver\PDOSqlite\Driver as DoctrineDriver;
 use Sydes\Database\Query\Grammars\SQLiteGrammar as QueryGrammar;
 use Sydes\Database\Query\Processors\SQLiteProcessor;
 use Sydes\Database\Schema\Grammars\SQLiteGrammar as SchemaGrammar;
@@ -51,5 +52,15 @@ class SQLiteConnection extends Connection
     protected function getDefaultPostProcessor()
     {
         return new SQLiteProcessor;
+    }
+
+    /**
+     * Get the Doctrine DBAL driver.
+     *
+     * @return \Doctrine\DBAL\Driver\PDOSqlite\Driver
+     */
+    protected function getDoctrineDriver()
+    {
+        return new DoctrineDriver;
     }
 }

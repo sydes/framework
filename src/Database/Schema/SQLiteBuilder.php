@@ -9,7 +9,7 @@ class SQLiteBuilder extends Builder
      */
     public function dropAllTables()
     {
-        if ($this->connection->getDatabaseName() != ':memory:') {
+        if ($this->connection->getDatabaseName() !== ':memory:') {
             return $this->refreshDatabaseFile();
         }
 
@@ -25,8 +25,6 @@ class SQLiteBuilder extends Builder
      */
     public function refreshDatabaseFile()
     {
-        unlink($this->connection->getDatabaseName());
-
-        touch($this->connection->getDatabaseName());
+        file_put_contents($this->connection->getDatabaseName(), '');
     }
 }

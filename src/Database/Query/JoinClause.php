@@ -80,7 +80,7 @@ class JoinClause extends Builder
      * @param \Closure|string $first
      * @param string|null     $operator
      * @param string|null     $second
-     * @return \Sydes\Database\Query\JoinClause
+     * @return $this
      */
     public function orOn($first, $operator = null, $second = null)
     {
@@ -90,10 +90,20 @@ class JoinClause extends Builder
     /**
      * Get a new instance of the join clause builder.
      *
-     * @return \Sydes\Database\Query\JoinClause
+     * @return $this
      */
     public function newQuery()
     {
         return new static($this->parentQuery, $this->type, $this->table);
+    }
+
+    /**
+     * Create a new query instance for sub-query.
+     *
+     * @return Builder
+     */
+    protected function forSubQuery()
+    {
+        return $this->parentQuery->newQuery();
     }
 }

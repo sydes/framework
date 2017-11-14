@@ -2,11 +2,13 @@
 
 namespace Sydes\Database\Schema\Grammars;
 
+use Doctrine\DBAL\Schema\AbstractSchemaManager as SchemaManager;
+use Doctrine\DBAL\Schema\TableDiff;
 use Sydes\Database\Connection;
-use Sydes\Support\Fluent;
 use Sydes\Database\Grammar as BaseGrammar;
 use Sydes\Database\Query\Expression;
 use Sydes\Database\Schema\Blueprint;
+use Sydes\Support\Fluent;
 
 abstract class Grammar extends BaseGrammar
 {
@@ -20,38 +22,36 @@ abstract class Grammar extends BaseGrammar
     /**
      * Compile a rename column command.
      *
-     * @param Blueprint $blueprint
-     * @param Fluent           $command
-     * @param Connection       $connection
+     * @param Blueprint  $blueprint
+     * @param Fluent     $command
+     * @param Connection $connection
      * @return array
      */
     public function compileRenameColumn(Blueprint $blueprint, Fluent $command, Connection $connection)
     {
-        // TODO make
-        return [];
+        return RenameColumn::compile($this, $blueprint, $command, $connection);
     }
 
     /**
      * Compile a change column command into a series of SQL statements.
      *
-     * @param Blueprint $blueprint
-     * @param Fluent           $command
-     * @param Connection       $connection
+     * @param Blueprint  $blueprint
+     * @param Fluent     $command
+     * @param Connection $connection
      * @return array
      *
      * @throws \RuntimeException
      */
     public function compileChange(Blueprint $blueprint, Fluent $command, Connection $connection)
     {
-        // TODO make
-        return [];
+        return ChangeColumn::compile($this, $blueprint, $command, $connection);
     }
 
     /**
      * Compile a foreign key command.
      *
      * @param Blueprint $blueprint
-     * @param Fluent           $command
+     * @param Fluent    $command
      * @return string
      */
     public function compileForeign(Blueprint $blueprint, Fluent $command)
@@ -123,9 +123,9 @@ abstract class Grammar extends BaseGrammar
     /**
      * Add the column modifiers to the definition.
      *
-     * @param string                           $sql
+     * @param string    $sql
      * @param Blueprint $blueprint
-     * @param Fluent           $column
+     * @param Fluent    $column
      * @return string
      */
     protected function addModifiers($sql, Blueprint $blueprint, Fluent $column)
@@ -143,7 +143,7 @@ abstract class Grammar extends BaseGrammar
      * Get the primary key command if it exists on the blueprint.
      *
      * @param Blueprint $blueprint
-     * @param string                           $name
+     * @param string    $name
      * @return Fluent|null
      */
     protected function getCommandByName(Blueprint $blueprint, $name)
@@ -159,7 +159,7 @@ abstract class Grammar extends BaseGrammar
      * Get all of the commands with a given name.
      *
      * @param Blueprint $blueprint
-     * @param string                           $name
+     * @param string    $name
      * @return array
      */
     protected function getCommandsByName(Blueprint $blueprint, $name)
@@ -199,8 +199,8 @@ abstract class Grammar extends BaseGrammar
     /**
      * Wrap a value in keyword identifiers.
      *
-     * @param \Sydes\Database\Query\Expression|string $value
-     * @param bool                                    $prefixAlias
+     * @param Expression|string $value
+     * @param bool              $prefixAlias
      * @return string
      */
     public function wrap($value, $prefixAlias = false)
@@ -225,6 +225,31 @@ abstract class Grammar extends BaseGrammar
         return is_bool($value)
             ? "'".(int)$value."'"
             : "'".strval($value)."'";
+    }
+
+    /**
+     * Create an empty Doctrine DBAL TableDiff from the Blueprint.
+     *
+     * @param Blueprint     $blueprint
+     * @param SchemaManager $schema
+     * @return TableDiff
+     */
+    public function getDoctrineTableDiff(Blueprint $blueprint, SchemaManager $schema)
+    {
+        $table = $this->getTablePrefix().$blueprint->getTable();
+        return tap(new TableDiff($table), function ($tableDiff) use ($schema, $table) {
+            $tableDiff->fromTable = $schema->listTableDetails($table);
+        });
+    }
+
+    /**
+     * Get the fluent commands for the grammar.
+     *
+     * @return array
+     */
+    public function getFluentCommands()
+    {
+        return [];
     }
 
     /**

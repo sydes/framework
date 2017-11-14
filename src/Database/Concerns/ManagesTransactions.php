@@ -63,7 +63,7 @@ trait ManagesTransactions
         if ($this->causedByDeadlock($e) &&
             $this->transactions > 1
         ) {
-            --$this->transactions;
+            $this->transactions--;
 
             throw $e;
         }
@@ -91,7 +91,7 @@ trait ManagesTransactions
     {
         $this->createTransaction();
 
-        ++$this->transactions;
+        $this->transactions++;
     }
 
     /**

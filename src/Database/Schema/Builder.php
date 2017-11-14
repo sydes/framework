@@ -107,6 +107,20 @@ class Builder
     }
 
     /**
+     * Get the data type for the given column name.
+     *
+     * @param string $table
+     * @param string $column
+     * @return string
+     */
+    public function getColumnType($table, $column)
+    {
+        $table = $this->connection->getTablePrefix().$table;
+
+        return $this->connection->getDoctrineColumn($table, $column)->getType()->getName();
+    }
+
+    /**
      * Get the column listing for a given table.
      *
      * @param string $table
@@ -114,9 +128,9 @@ class Builder
      */
     public function getColumnListing($table)
     {
-        $table = $this->connection->getTablePrefix().$table;
-
-        $results = $this->connection->select($this->grammar->compileColumnListing($table));
+        $results = $this->connection->select($this->grammar->compileColumnListing(
+            $this->connection->getTablePrefix().$table
+        ));
 
         return $this->connection->getPostProcessor()->processColumnListing($results);
     }

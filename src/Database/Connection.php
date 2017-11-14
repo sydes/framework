@@ -4,6 +4,7 @@ namespace Sydes\Database;
 
 use Closure;
 use DateTimeInterface;
+use Doctrine\DBAL\Connection as DoctrineConnection;
 use Exception;
 use PDO;
 use PDOStatement;
@@ -90,6 +91,13 @@ class Connection implements ConnectionInterface
     protected $transactions = 0;
 
     /**
+     * Indicates if changes have been made to the database.
+     *
+     * @var int
+     */
+    protected $recordsModified = false;
+
+    /**
      * All of the queries run against the connection.
      *
      * @var array
@@ -109,6 +117,13 @@ class Connection implements ConnectionInterface
      * @var bool
      */
     protected $pretending = false;
+
+    /**
+     * The instance of Doctrine connection.
+     *
+     * @var \Doctrine\DBAL\Connection
+     */
+    protected $doctrineConnection;
 
     /**
      * Create a new database connection instance.
@@ -402,6 +417,8 @@ class Connection implements ConnectionInterface
 
             $this->bindValues($statement, $this->prepareBindings($bindings));
 
+            $this->recordsHaveBeenModified();
+
             return $statement->execute();
         });
     }
@@ -429,7 +446,11 @@ class Connection implements ConnectionInterface
 
             $statement->execute();
 
-            return $statement->rowCount();
+            $this->recordsHaveBeenModified(
+                ($count = $statement->rowCount()) > 0
+            );
+
+            return $count;
         });
     }
 
@@ -446,7 +467,11 @@ class Connection implements ConnectionInterface
                 return true;
             }
 
-            return $this->getPdo()->exec($query) === false ? false : true;
+            $this->recordsHaveBeenModified(
+                $change = ($this->getPdo()->exec($query) === false ? false : true)
+            );
+
+            return $change;
         });
     }
 
@@ -651,6 +676,73 @@ class Connection implements ConnectionInterface
     }
 
     /**
+     * Indicate if any records have been modified.
+     *
+     * @param bool $value
+     * @return void
+     */
+    public function recordsHaveBeenModified($value = true)
+    {
+        if (!$this->recordsModified) {
+            $this->recordsModified = $value;
+        }
+    }
+
+    /**
+     * Is Doctrine available?
+     *
+     * @return bool
+     */
+    public function isDoctrineAvailable()
+    {
+        return class_exists('Doctrine\DBAL\Connection');
+    }
+
+    /**
+     * Get a Doctrine Schema Column instance.
+     *
+     * @param string $table
+     * @param string $column
+     * @return \Doctrine\DBAL\Schema\Column
+     */
+    public function getDoctrineColumn($table, $column)
+    {
+        $schema = $this->getDoctrineSchemaManager();
+
+        return $schema->listTableDetails($table)->getColumn($column);
+    }
+
+    /**
+     * Get the Doctrine DBAL schema manager for the connection.
+     *
+     * @return \Doctrine\DBAL\Schema\AbstractSchemaManager
+     */
+    public function getDoctrineSchemaManager()
+    {
+        return $this->getDoctrineDriver()->getSchemaManager($this->getDoctrineConnection());
+    }
+
+    /**
+     * Get the Doctrine DBAL database connection instance.
+     *
+     * @return \Doctrine\DBAL\Connection
+     */
+    public function getDoctrineConnection()
+    {
+        if (is_null($this->doctrineConnection)) {
+            $driver = $this->getDoctrineDriver();
+
+            $this->doctrineConnection = new DoctrineConnection([
+                'pdo'    => $this->getPdo(),
+                'dbname' => $this->getConfig('database'),
+                'driver' => $driver->getName(),
+            ], $driver);
+        }
+
+        return $this->doctrineConnection;
+    }
+
+    /**
      * Get the current PDO connection.
      *
      * @return \PDO
@@ -672,6 +764,10 @@ class Connection implements ConnectionInterface
     public function getReadPdo()
     {
         if ($this->transactions >= 1) {
+            return $this->getPdo();
+        }
+
+        if ($this->getConfig('sticky') && $this->recordsModified) {
             return $this->getPdo();
         }
 
